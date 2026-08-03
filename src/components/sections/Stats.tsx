@@ -86,6 +86,7 @@ export function Stats() {
     >
       {/* Radial gradient background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.05)_0%,transparent_70%)]" />
+      <div className="absolute top-0 left-0 right-0 h-px tricolor-line" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div

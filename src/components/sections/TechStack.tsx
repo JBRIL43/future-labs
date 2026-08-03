@@ -145,6 +145,7 @@ export function TechStack() {
       ref={sectionRef}
     >
       <div className="absolute inset-0 dot-pattern" />
+      <div className="absolute top-0 left-0 right-0 h-px tricolor-line" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}

@@ -124,6 +124,7 @@ export function Services() {
 
   return (
     <section id="services" className="py-24 lg:py-32 relative section-3d">
+      <div className="absolute top-0 left-0 right-0 h-px tricolor-line" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header with 3D effect */}
         <motion.div

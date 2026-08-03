@@ -57,6 +57,68 @@ function Sphere3D({ className, style }: ShapeProps) {
   )
 }
 
+// Ethiopian cross shape (3D wireframe)
+function EthCross3D({ className, style }: ShapeProps) {
+  return (
+    <div className={className} style={style}>
+      <svg viewBox="0 0 60 60" className="w-full h-full eth-cross-glow">
+        {/* Axumite cross with 3D depth illusion */}
+        <path d="M28 4v14H14v8h14v14h4V26h14v-8H32V4h-4z" 
+          fill="none" stroke="rgba(16,185,129,0.15)" strokeWidth="0.6" />
+        <path d="M26 8v10H16v4h10v10h8V22h10v-4H34V8h-8z" 
+          fill="none" stroke="rgba(16,185,129,0.08)" strokeWidth="0.4" strokeDasharray="2 2" />
+        {/* Diamond center */}
+        <rect x="26" y="26" width="8" height="8" transform="rotate(45 30 30)" 
+          fill="none" stroke="rgba(245,158,11,0.1)" strokeWidth="0.4" />
+        {/* Corner dots */}
+        <circle cx="30" cy="4" r="1" fill="rgba(16,185,129,0.2)" />
+        <circle cx="30" cy="56" r="1" fill="rgba(16,185,129,0.2)" />
+        <circle cx="4" cy="30" r="1" fill="rgba(16,185,129,0.2)" />
+        <circle cx="56" cy="30" r="1" fill="rgba(16,185,129,0.2)" />
+      </svg>
+    </div>
+  )
+}
+
+// Meskel daisy 3D
+function MeskelDaisy3D({ className, style }: ShapeProps) {
+  return (
+    <div className={className} style={style}>
+      <svg viewBox="0 0 60 60" className="w-full h-full">
+        {Array.from({ length: 10 }).map((_, i) => {
+          const angle = (i * 36) * (Math.PI / 180)
+          return (
+            <ellipse
+              key={i}
+              cx="30"
+              cy="18"
+              rx="2.5"
+              ry="10"
+              fill="none"
+              stroke="rgba(245,158,11,0.1)"
+              strokeWidth="0.4"
+              transform={`rotate(${i * 36} 30 30)`}
+            />
+          )
+        })}
+        <circle cx="30" cy="30" r="4" fill="none" stroke="rgba(245,158,11,0.12)" strokeWidth="0.5" />
+        <circle cx="30" cy="30" r="2" fill="rgba(245,158,11,0.05)" />
+      </svg>
+    </div>
+  )
+}
+
+// Ge'ez character floating element
+function GezChar3D({ char, className, style }: ShapeProps & { char: string }) {
+  return (
+    <div className={className} style={style}>
+      <span className="geez-watermark text-emerald-500/[0.08] text-xl block">
+        {char}
+      </span>
+    </div>
+  )
+}
+
 interface FloatingShapes3DProps {
   variant?: 'hero' | 'subtle'
 }
@@ -86,14 +148,14 @@ export function FloatingShapes3D({ variant = 'hero' }: FloatingShapes3DProps) {
         <Cube />
       </motion.div>
 
-      {/* Octahedron - left side */}
+      {/* Ethiopian Cross - left side (NEW) */}
       <motion.div
         className="absolute shape-3d"
         style={{
-          top: isHero ? '25%' : '15%',
-          left: isHero ? '5%' : '8%',
-          width: isHero ? 60 : 40,
-          height: isHero ? 60 : 40,
+          top: isHero ? '20%' : '12%',
+          left: isHero ? '4%' : '7%',
+          width: isHero ? 70 : 45,
+          height: isHero ? 70 : 45,
         }}
         animate={{
           y: [0, -20, -40, -15, 0],
@@ -103,7 +165,7 @@ export function FloatingShapes3D({ variant = 'hero' }: FloatingShapes3DProps) {
         }}
         transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
       >
-        <Octahedron />
+        <EthCross3D />
       </motion.div>
 
       {/* Ring - center left */}
@@ -126,23 +188,24 @@ export function FloatingShapes3D({ variant = 'hero' }: FloatingShapes3DProps) {
         <Ring3D />
       </motion.div>
 
-      {/* Sphere - bottom right */}
+      {/* Meskel Daisy - bottom right (NEW) */}
       <motion.div
         className="absolute shape-3d"
         style={{
-          bottom: isHero ? '15%' : '20%',
-          right: isHero ? '15%' : '18%',
-          width: isHero ? 50 : 35,
-          height: isHero ? 50 : 35,
+          bottom: isHero ? '18%' : '22%',
+          right: isHero ? '12%' : '15%',
+          width: isHero ? 55 : 35,
+          height: isHero ? 55 : 35,
         }}
         animate={{
           y: [0, -25, -10, -30, 0],
           x: [0, -10, 5, -8, 0],
           scale: [1, 1.15, 1, 1.1, 1],
+          rotate: [0, 360],
         }}
-        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
       >
-        <Sphere3D />
+        <MeskelDaisy3D />
       </motion.div>
 
       {/* Small cube - floating mid */}
@@ -162,6 +225,46 @@ export function FloatingShapes3D({ variant = 'hero' }: FloatingShapes3DProps) {
         transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
       >
         <Cube />
+      </motion.div>
+
+      {/* Ge'ez character - top left area (NEW) */}
+      <motion.div
+        className="absolute shape-3d"
+        style={{
+          top: isHero ? '35%' : '25%',
+          left: isHero ? '22%' : '28%',
+          width: isHero ? 30 : 20,
+          height: isHero ? 30 : 20,
+        }}
+        animate={{
+          y: [0, -15, -30, -10, 0],
+          rotateX: [0, 15, -10, 5, 0],
+          rotateY: [0, -20, 10, -15, 0],
+          opacity: [0.4, 0.7, 0.4],
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <GezChar3D char="ፊ" />
+      </motion.div>
+
+      {/* Ge'ez character - right area (NEW) */}
+      <motion.div
+        className="absolute shape-3d"
+        style={{
+          top: isHero ? '55%' : '60%',
+          right: isHero ? '8%' : '12%',
+          width: isHero ? 25 : 18,
+          height: isHero ? 25 : 18,
+        }}
+        animate={{
+          y: [0, 10, -20, 5, 0],
+          rotateX: [0, -10, 15, -5, 0],
+          rotateY: [0, 20, -10, 15, 0],
+          opacity: [0.3, 0.6, 0.3],
+        }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <GezChar3D char="ደ" />
       </motion.div>
 
       {/* Second ring - top center */}
@@ -184,13 +287,37 @@ export function FloatingShapes3D({ variant = 'hero' }: FloatingShapes3DProps) {
         <Ring3D />
       </motion.div>
 
-      {/* Small sphere - bottom left */}
+      {/* Ethiopian Cross - bottom center (NEW) */}
       {isHero && (
         <motion.div
           className="absolute shape-3d"
           style={{
             bottom: '30%',
-            left: '25%',
+            left: '35%',
+            width: 45,
+            height: 45,
+            opacity: 0.5,
+          }}
+          animate={{
+            y: [0, -20, -8, -25, 0],
+            x: [0, 8, -4, 12, 0],
+            rotateX: [0, 180, 360],
+            rotateZ: [0, -90, -180],
+            scale: [1, 1.2, 0.9, 1.1, 1],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <EthCross3D />
+        </motion.div>
+      )}
+
+      {/* Small sphere - bottom left */}
+      {isHero && (
+        <motion.div
+          className="absolute shape-3d"
+          style={{
+            bottom: '15%',
+            left: '8%',
             width: 25,
             height: 25,
           }}
@@ -204,6 +331,26 @@ export function FloatingShapes3D({ variant = 'hero' }: FloatingShapes3DProps) {
           <Sphere3D />
         </motion.div>
       )}
+
+      {/* Octahedron - mid right (replaced old left position) */}
+      <motion.div
+        className="absolute shape-3d"
+        style={{
+          top: isHero ? '70%' : '75%',
+          right: isHero ? '30%' : '35%',
+          width: isHero ? 40 : 28,
+          height: isHero ? 40 : 28,
+          opacity: 0.5,
+        }}
+        animate={{
+          y: [0, -12, -25, -8, 0],
+          rotateX: [0, 90, 180, 270, 360],
+          rotateZ: [0, -45, 45, -45, 0],
+        }}
+        transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
+      >
+        <Octahedron />
+      </motion.div>
 
       {/* Light beams */}
       {isHero && (

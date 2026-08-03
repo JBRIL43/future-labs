@@ -58,8 +58,14 @@ export function About() {
 
   return (
     <section id="about" className="py-24 lg:py-32 grid-pattern section-3d relative">
-      {/* Floating 3D decoration */}
+      {/* Ethiopian tricolor accent */}
+      <div className="absolute top-0 left-0 right-0 h-px tricolor-line" />
+
+      {/* Floating 3D decoration with Ethiopian cross watermark */}
       <div className="shape-float-slow absolute top-10 right-10 w-16 h-16 rounded-full border border-primary/10 opacity-30" />
+      <div className="absolute top-12 left-1/2 -translate-x-1/2 opacity-[0.02] geez-watermark text-6xl text-primary select-none pointer-events-none">
+        ፊደል
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}

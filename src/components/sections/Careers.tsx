@@ -103,7 +103,8 @@ export function Careers() {
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
 
   return (
-    <section id="careers" ref={sectionRef} className="py-24 lg:py-32 section-3d">
+    <section id="careers" ref={sectionRef} className="py-24 lg:py-32 section-3d relative">
+      <div className="absolute top-0 left-0 right-0 h-px tricolor-line" />
       <FloatingShapes3D variant="subtle" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16">
