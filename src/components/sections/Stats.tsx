@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { TiltCard3D } from '@/components/TiltCard3D';
 
 interface StatItemProps {
   value: string;
@@ -50,15 +51,18 @@ function StatItem({ value, label, numericPart, suffix = '' }: StatItemProps) {
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className="text-center"
     >
-      <span
-        ref={displayRef}
-        className="gradient-text text-4xl md:text-5xl lg:text-6xl font-bold"
-      >
-        0{suffix}
-      </span>
-      <p className="text-muted-foreground text-sm uppercase tracking-wider mt-3">
-        {label}
-      </p>
+      <TiltCard3D className="glass rounded-2xl p-6" tiltDegree={15}>
+        <span
+          ref={displayRef}
+          className="gradient-text text-4xl md:text-5xl lg:text-6xl font-bold"
+          style={{ textShadow: '0 0 30px rgba(16,185,129,0.3)' }}
+        >
+          0{suffix}
+        </span>
+        <p className="text-muted-foreground text-sm uppercase tracking-wider mt-3">
+          {label}
+        </p>
+      </TiltCard3D>
     </motion.div>
   );
 }
@@ -78,7 +82,7 @@ export function Stats() {
     <section
       id="stats"
       ref={containerRef}
-      className="py-24 lg:py-32 relative"
+      className="py-24 lg:py-32 relative section-3d"
     >
       {/* Radial gradient background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.05)_0%,transparent_70%)]" />

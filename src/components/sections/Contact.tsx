@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { TiltCard3D } from '@/components/TiltCard3D';
+import { FloatingShapes3D } from '@/components/FloatingShapes3D';
 
 const contactInfo = [
   {
@@ -132,7 +134,8 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" ref={sectionRef} className="py-24 lg:py-32 grid-pattern">
+    <section id="contact" ref={sectionRef} className="py-24 lg:py-32 grid-pattern section-3d">
+      <FloatingShapes3D variant="subtle" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16">
           {/* Left column */}
@@ -174,22 +177,23 @@ export function Contact() {
               {contactInfo.map((item, index) => {
                 const IconComp = item.icon;
                 const content = (
-                  <motion.div
-                    key={item.label}
-                    custom={index}
-                    variants={cardVariants}
-                    initial="hidden"
-                    animate={isInView ? 'visible' : 'hidden'}
-                    className="glass rounded-xl p-4 flex items-center gap-4 hover:border-primary/20 transition-all duration-300"
-                  >
-                    <div className="bg-primary/10 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <IconComp className="text-primary w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground text-sm">{item.label}</p>
-                      <p className="text-foreground font-medium">{item.value}</p>
-                    </div>
-                  </motion.div>
+                  <TiltCard3D key={item.label} className="glass rounded-xl p-4" tiltDegree={8}>
+                    <motion.div
+                      custom={index}
+                      variants={cardVariants}
+                      initial="hidden"
+                      animate={isInView ? 'visible' : 'hidden'}
+                      className="flex items-center gap-4 transition-all duration-300"
+                    >
+                      <div className="bg-primary/10 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <IconComp className="text-primary w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground text-sm">{item.label}</p>
+                        <p className="text-foreground font-medium">{item.value}</p>
+                      </div>
+                    </motion.div>
+                  </TiltCard3D>
                 );
 
                 if (item.href) {
@@ -236,9 +240,9 @@ export function Contact() {
             initial="hidden"
             animate={isInView ? 'visible' : 'hidden'}
           >
+            <TiltCard3D className="glass rounded-2xl p-6 lg:p-8" tiltDegree={4} scaleOnHover={1.005}>
             <form
               onSubmit={handleSubmit}
-              className="glass rounded-2xl p-6 lg:p-8"
             >
               <div className="space-y-5">
                 {/* Name field */}
@@ -300,6 +304,7 @@ export function Contact() {
                   type="submit"
                   className="w-full"
                   disabled={isSubmitting}
+                  style={{ boxShadow: '0 0 25px rgba(16,185,129,0.2), 0 4px 15px rgba(0,0,0,0.3)' }}
                 >
                   {isSubmitting ? (
                     <>
@@ -315,6 +320,7 @@ export function Contact() {
                 </Button>
               </div>
             </form>
+            </TiltCard3D>
           </motion.div>
         </div>
       </div>

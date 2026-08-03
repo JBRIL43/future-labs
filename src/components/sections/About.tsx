@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Target, Eye } from 'lucide-react';
+import { TiltCard3D } from '@/components/TiltCard3D';
 
 const coreValues = [
   'Innovation',
@@ -56,7 +57,10 @@ export function About() {
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
 
   return (
-    <section id="about" className="py-24 lg:py-32 grid-pattern relative">
+    <section id="about" className="py-24 lg:py-32 grid-pattern section-3d relative">
+      {/* Floating 3D decoration */}
+      <div className="shape-float-slow absolute top-10 right-10 w-16 h-16 rounded-full border border-primary/10 opacity-30" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -89,39 +93,37 @@ export function About() {
             variants={containerVariants}
           >
             {/* Mission Card */}
-            <motion.div
-              className="glass rounded-2xl p-6"
-              variants={cardVariants}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
-                  <Target className="w-5 h-5 text-primary" />
+            <motion.div variants={cardVariants}>
+              <TiltCard3D className="glass rounded-2xl p-6 h-full">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+                    <Target className="w-5 h-5 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold">Our Mission</h3>
                 </div>
-                <h3 className="text-xl font-semibold">Our Mission</h3>
-              </div>
-              <p className="text-muted-foreground leading-relaxed">
-                Develop innovative digital products powered by modern technologies
-                that solve real-world problems and accelerate Ethiopia&apos;s
-                digital transformation.
-              </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  Develop innovative digital products powered by modern technologies
+                  that solve real-world problems and accelerate Ethiopia&apos;s
+                  digital transformation.
+                </p>
+              </TiltCard3D>
             </motion.div>
 
             {/* Vision Card */}
-            <motion.div
-              className="glass rounded-2xl p-6"
-              variants={cardVariants}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
-                  <Eye className="w-5 h-5 text-primary" />
+            <motion.div variants={cardVariants}>
+              <TiltCard3D className="glass rounded-2xl p-6 h-full">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+                    <Eye className="w-5 h-5 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold">Our Vision</h3>
                 </div>
-                <h3 className="text-xl font-semibold">Our Vision</h3>
-              </div>
-              <p className="text-muted-foreground leading-relaxed">
-                To become Ethiopia&apos;s leading technology innovation lab, creating
-                digital ecosystems that improve businesses, communities, and everyday
-                life.
-              </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  To become Ethiopia&apos;s leading technology innovation lab, creating
+                  digital ecosystems that improve businesses, communities, and everyday
+                  life.
+                </p>
+              </TiltCard3D>
             </motion.div>
           </motion.div>
 
@@ -133,7 +135,7 @@ export function About() {
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
             >
-              Core Values
+              Core <span className="gradient-text">Values</span>
             </motion.h3>
             <motion.div
               className="grid grid-cols-2 gap-4"
@@ -144,11 +146,14 @@ export function About() {
               {coreValues.map((value) => (
                 <motion.div
                   key={value}
-                  className="glass rounded-xl p-4 flex items-center gap-3"
                   variants={valueVariants}
                 >
-                  <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
-                  <span className="text-sm font-medium">{value}</span>
+                  <TiltCard3D className="glass rounded-xl p-4" tiltDegree={10}>
+                    <div className="flex items-center gap-3">
+                      <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
+                      <span className="text-sm font-medium">{value}</span>
+                    </div>
+                  </TiltCard3D>
                 </motion.div>
               ))}
             </motion.div>

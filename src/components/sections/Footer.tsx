@@ -35,7 +35,11 @@ const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) =
 
 export function Footer() {
   return (
-    <footer id="footer" className="border-t border-border pt-16 pb-8 mt-auto">
+    <footer id="footer" className="relative border-t border-border pt-16 pb-8 mt-auto">
+      <div className="absolute top-0 left-0 right-0 h-px" style={{
+        background: 'linear-gradient(90deg, transparent, rgba(16,185,129,0.2), rgba(16,185,129,0.4), rgba(16,185,129,0.2), transparent)',
+        boxShadow: '0 0 15px rgba(16,185,129,0.1)',
+      }} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">

@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { TiltCard3D } from '@/components/TiltCard3D';
 
 interface TechItem {
   name: string;
@@ -140,7 +141,7 @@ export function TechStack() {
   return (
     <section
       id="tech-stack"
-      className="relative py-24 lg:py-32 overflow-hidden"
+      className="relative py-24 lg:py-32 overflow-hidden section-3d"
       ref={sectionRef}
     >
       <div className="absolute inset-0 dot-pattern" />
@@ -193,24 +194,26 @@ export function TechStack() {
                   animate="visible"
                 >
                   {cat.items.map((item) => (
-                    <motion.div
-                      key={item.name}
-                      variants={gridItemVariants}
-                      className="glass rounded-xl p-4 flex items-center gap-3 cursor-default transition-all duration-300 hover:border-primary/20 hover:-translate-y-0.5"
-                    >
-                      <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold"
-                        style={{
-                          backgroundColor: `${item.color}20`,
-                          color: item.color,
-                        }}
+                    <TiltCard3D key={item.name} className="glass rounded-xl p-4" tiltDegree={15}>
+                      <motion.div
+                        variants={gridItemVariants}
+                        className="flex items-center gap-3 cursor-default transition-all duration-300"
                       >
-                        {item.name[0]}
-                      </div>
-                      <span className="font-medium text-sm truncate">
-                        {item.name}
-                      </span>
-                    </motion.div>
+                        <div
+                          className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold"
+                          style={{
+                            backgroundColor: `${item.color}20`,
+                            color: item.color,
+                            boxShadow: `0 0 15px ${item.color}20`,
+                          }}
+                        >
+                          {item.name[0]}
+                        </div>
+                        <span className="font-medium text-sm truncate">
+                          {item.name}
+                        </span>
+                      </motion.div>
+                    </TiltCard3D>
                   ))}
                 </motion.div>
               </TabsContent>

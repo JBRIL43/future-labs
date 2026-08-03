@@ -5,6 +5,8 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { CheckCircle2, ArrowRight, MapPin, Briefcase } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { TiltCard3D } from '@/components/TiltCard3D';
+import { FloatingShapes3D } from '@/components/FloatingShapes3D';
 
 interface JobListing {
   title: string;
@@ -101,7 +103,8 @@ export function Careers() {
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
 
   return (
-    <section id="careers" ref={sectionRef} className="py-24 lg:py-32">
+    <section id="careers" ref={sectionRef} className="py-24 lg:py-32 section-3d">
+      <FloatingShapes3D variant="subtle" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16">
           {/* Left column */}
@@ -121,7 +124,7 @@ export function Careers() {
               transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
               className="text-3xl md:text-4xl font-bold mt-3"
             >
-              Join the Future of Innovation
+              Join the Future of <span className="gradient-text">Innovation</span>
             </motion.h2>
             <motion.p
               variants={headerVariants}
@@ -141,7 +144,8 @@ export function Careers() {
               initial="hidden"
               animate={isInView ? 'visible' : 'hidden'}
               transition={{ duration: 0.6, ease: 'easeOut', delay: 0.3 }}
-              className="mt-8 relative rounded-2xl overflow-hidden h-[240px] sm:h-[300px] glow-emerald"
+              className="mt-8 relative rounded-2xl overflow-hidden h-[240px] sm:h-[300px] glow-emerald glow-emerald-strong"
+              style={{ transform: 'perspective(1000px) rotateY(3deg)' }}
             >
               <Image
                 src="/team-culture.png"
@@ -156,7 +160,7 @@ export function Careers() {
               variants={containerVariants}
               initial="hidden"
               animate={isInView ? 'visible' : 'hidden'}
-              className="mt-8 space-y-3"
+              className="mt-8 space-y-3 glass rounded-2xl p-6"
             >
               {benefits.map((benefit) => (
                 <motion.div
@@ -194,36 +198,37 @@ export function Careers() {
                   key={job.title}
                   custom={index}
                   variants={cardVariants}
-                  className="glass rounded-xl p-5 hover:border-primary/20 hover:-translate-y-0.5 transition-all duration-300"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-lg">{job.title}</h4>
-                      <div className="flex items-center gap-4 mt-1.5 text-muted-foreground text-sm">
-                        <span className="flex items-center gap-1.5">
-                          <Briefcase className="w-3.5 h-3.5" />
-                          {job.type}
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <MapPin className="w-3.5 h-3.5" />
-                          {job.location}
-                        </span>
+                  <TiltCard3D className="glass rounded-xl p-5" tiltDegree={8}>
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-lg">{job.title}</h4>
+                        <div className="flex items-center gap-4 mt-1.5 text-muted-foreground text-sm">
+                          <span className="flex items-center gap-1.5">
+                            <Briefcase className="w-3.5 h-3.5" />
+                            {job.type}
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5" />
+                            {job.location}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          {job.tags.map((tag) => (
+                            <Badge key={tag} variant="secondary">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        {job.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
+                      <button
+                        className="flex items-center gap-1.5 text-primary hover:underline text-sm font-medium flex-shrink-0 group"
+                      >
+                        Apply Now
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </button>
                     </div>
-                    <button
-                      className="flex items-center gap-1.5 text-primary hover:underline text-sm font-medium flex-shrink-0 group"
-                    >
-                      Apply Now
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  </div>
+                  </TiltCard3D>
                 </motion.div>
               ))}
             </motion.div>

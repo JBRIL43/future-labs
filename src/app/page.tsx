@@ -8,12 +8,16 @@ import { TechStack } from '@/components/sections/TechStack';
 import { Careers } from '@/components/sections/Careers';
 import { Contact } from '@/components/sections/Contact';
 import { Footer } from '@/components/sections/Footer';
+import { AnimatedBackground } from '@/components/AnimatedBackground';
+import { FloatingShapes3D } from '@/components/FloatingShapes3D';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      <AnimatedBackground />
+      <FloatingShapes3D variant="hero" />
       <Navigation />
-      <main className="flex-1">
+      <main className="flex-1 relative z-10">
         <Hero />
         <Stats />
         <About />
