@@ -135,3 +135,27 @@ Stage Summary:
 - Hero background is now a living particle image — thousands of colored pixels that explode away from the cursor and fluidly spring back
 - Cursor is now responsive and snappy (no perceived lag)
 - Hero blob responds with zero-lag direct DOM manipulation (no React state overhead)
+---
+Task ID: 5
+Agent: Main Agent
+Task: Extend subtle spring-physics particle interaction across entire website
+
+Work Log:
+- Rewrote AnimatedBackground.tsx with same spring-home physics as hero particle image
+- Each particle now has homeX/homeY and springs back after cursor repels it
+- Tuned for subtlety: SPRING=0.012 (vs hero 0.035), REPEL_FORCE=2.5 (vs hero 8), REPEL_RADIUS=100 (vs hero 120)
+- Increased particle count to 160 with higher density formula (1/10000px² vs old 1/12000px²)
+- Reduced opacities: normal particles 0.08-0.33, Ge'ez 0.015-0.055, accent 0.05-0.2
+- Removed heavy per-particle radialGradient in favor of simple arc + soft halo (2 draws per particle instead of gradient creation)
+- Removed expensive cursor trail array and magnetic field rings
+- Replaced with single subtle cursor glow radial gradient
+- Connections use distSq check before sqrt, batched lineWidth setting
+- Click ripples preserved but slightly softer
+- Removed unused orbitRadius/orbitAngle/orbitSpeed/isOrbiting from particle interface
+- Verified: zero lint errors, zero browser errors on desktop 1920x1080 and mobile 375x812
+
+Stage Summary:
+- Every section of the site now has the same living particle feel as the hero — particles gently scatter from cursor and fluidly spring back
+- Effect is subtle: low opacity, small displacement, gentle spring return
+- Hero retains its dramatic image-particle effect; the rest of the site has the ambient version
+- Performance optimized: no per-frame gradient creation, distSq before sqrt, batched draw calls
