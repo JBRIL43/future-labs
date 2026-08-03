@@ -94,7 +94,7 @@ const techData: TechCategory[] = [
       { name: 'Solidity', color: '#363636' },
       { name: 'Ethereum', color: '#627EEA' },
       { name: 'Web3.js', color: '#F16822' },
-      { name: 'Smart Contracts', color: '#10b981' },
+      { name: 'Smart Contracts', color: '#0d9488' },
     ],
   },
 ];

@@ -6,54 +6,98 @@ import { useRef, useMemo, useEffect, useState } from 'react'
 import * as THREE from 'three'
 
 /* ═══════════════════════════════════════════
-   EXPORTED VISIBILITY FLAG
+   BRAND COLORS (from Future Labs logo)
    ═══════════════════════════════════════════ */
+const BRAND = {
+  teal: '#0d9488',        // Primary teal from logo
+  tealLight: '#14b8a6',   // Lighter teal
+  tealBright: '#2dd4bf',  // Bright teal for corona
+  tealGlow: '#5eead4',    // Softest teal
+  gold: '#d4af37',        // Gold dot accent from logo
+  daynFlow: '#c4a35a',    // Earthy gold from Dayn Flow logo
+}
+
 export const sceneVisible = { current: true }
 
 /* ═══════════════════════════════════════════
-   ORBIT CONFIG — planets around the sun
+   ORBIT CONFIG — product planets
    ═══════════════════════════════════════════ */
 
-interface PlanetConfig {
+interface ProductPlanet {
   name: string
-  radius: number        // planet sphere radius
-  orbitRadius: number    // distance from sun
-  speed: number          // orbit speed (rad/s)
+  label: string
+  sublabel: string
+  radius: number          // planet visual radius
+  orbitRadius: number      // distance from sun
+  speed: number            // orbit angular speed
   color: string
   emissiveColor: string
-  emissiveIntensity: number
-  tilt: number           // axial tilt
-  hasRing?: boolean
-  ringColor?: string
-  label?: string
+  morphColor: string       // color when morphed
+  tilt: number             // orbit plane tilt
+  hasRing: boolean
+  ringColor: string
+  // Morph: sphere → product shape
+  morphType: 'capsule' | 'sphere' | 'cube' | 'octahedron'
+  morphDelay: number       // seconds before morph starts
+  morphDuration: number    // seconds to complete morph
 }
 
-const PLANETS: PlanetConfig[] = [
+const PRODUCT_PLANETS: ProductPlanet[] = [
   {
     name: 'dayn-flow',
-    radius: 0.35,
-    orbitRadius: 4.2,
-    speed: 0.15,
-    color: '#f59e0b',
-    emissiveColor: '#f59e0b',
-    emissiveIntensity: 0.6,
-    tilt: 0.15,
-    hasRing: true,
-    ringColor: '#f59e0b',
     label: 'DAYN FLOW',
+    sublabel: 'Product Platform',
+    radius: 0.38,
+    orbitRadius: 4.0,
+    speed: 0.12,
+    color: BRAND.daynFlow,
+    emissiveColor: BRAND.daynFlow,
+    morphColor: '#e0c068',
+    tilt: 0.08,
+    hasRing: true,
+    ringColor: BRAND.daynFlow,
+    morphType: 'capsule',
+    morphDelay: 2.5,
+    morphDuration: 3.0,
   },
-]
-
-// Future empty orbit rings (for upcoming products)
-const FUTURE_ORBITS = [
-  { radius: 2.8, color: '#06b6d4', opacity: 0.04 },
-  { radius: 5.8, color: '#a855f7', opacity: 0.03 },
-  { radius: 7.2, color: '#f43f5e', opacity: 0.025 },
+  {
+    name: 'ai-engine',
+    label: 'AI ENGINE',
+    sublabel: 'Coming Soon',
+    radius: 0.22,
+    orbitRadius: 5.8,
+    speed: -0.08,
+    color: '#06b6d4',
+    emissiveColor: '#06b6d4',
+    morphColor: '#22d3ee',
+    tilt: -0.12,
+    hasRing: false,
+    ringColor: '#06b6d4',
+    morphType: 'octahedron',
+    morphDelay: 4.0,
+    morphDuration: 3.5,
+  },
+  {
+    name: 'cloud-platform',
+    label: 'CLOUD',
+    sublabel: 'Coming Soon',
+    radius: 0.18,
+    orbitRadius: 7.0,
+    speed: 0.06,
+    color: '#a855f7',
+    emissiveColor: '#a855f7',
+    morphColor: '#c084fc',
+    tilt: 0.15,
+    hasRing: false,
+    ringColor: '#a855f7',
+    morphType: 'sphere',
+    morphDelay: 5.5,
+    morphDuration: 4.0,
+  },
 ]
 
 /* ═══════════════════════════════════════════
    SUN (FUTURE LABS)
-   The central star of our solar system
    ═══════════════════════════════════════════ */
 
 function Sun() {
@@ -64,7 +108,7 @@ function Sun() {
     useRef<THREE.Mesh>(null),
   ]
   const lightRef = useRef<THREE.PointLight>(null)
-  const outerLightRef = useRef<THREE.PointLight>(null)
+  const goldLightRef = useRef<THREE.PointLight>(null)
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime()
@@ -72,12 +116,10 @@ function Sun() {
 
     const pulse = Math.sin(t * 1.5) * 0.06 + 1
 
-    // Core sphere pulsing
     if (coreRef.current) {
       coreRef.current.scale.setScalar(pulse)
     }
 
-    // Corona layers pulse at different rates
     const coronaPulses = [
       Math.sin(t * 1.2 + 0.5) * 0.05 + 1,
       Math.sin(t * 0.9 + 1.2) * 0.04 + 1,
@@ -88,36 +130,47 @@ function Sun() {
       ref.current.scale.setScalar(coronaPulses[i])
     })
 
-    // Light pulsing
     if (lightRef.current) {
       lightRef.current.intensity = 4 + Math.sin(t * 1.5) * 0.8
     }
-    if (outerLightRef.current) {
-      outerLightRef.current.intensity = 2 + Math.sin(t * 1.2) * 0.4
+    if (goldLightRef.current) {
+      goldLightRef.current.intensity = 1.5 + Math.sin(t * 1.0) * 0.3
     }
   })
 
   return (
     <group>
-      {/* Core point light (emerald glow) */}
-      <pointLight ref={lightRef} color="#10b981" distance={15} decay={2} intensity={4} />
-      <pointLight ref={outerLightRef} color="#f59e0b" distance={20} decay={2} intensity={2} />
+      <pointLight ref={lightRef} color={BRAND.teal} distance={15} decay={2} intensity={4} />
+      <pointLight ref={goldLightRef} color={BRAND.gold} distance={12} decay={2} intensity={1.5} />
 
-      {/* Bright inner core - the sun body */}
+      {/* Core sun body — brand teal */}
       <mesh ref={coreRef}>
         <sphereGeometry args={[1.0, 64, 64]} />
         <meshStandardMaterial
-          emissive="#10b981"
+          emissive={BRAND.teal}
           emissiveIntensity={4}
-          color="#34d399"
+          color={BRAND.tealLight}
           toneMapped={false}
         />
       </mesh>
 
-      {/* Corona glow layers (sun atmosphere) */}
-      {[{ size: 1.4, opacity: 0.15, color: '#10b981' },
-        { size: 1.9, opacity: 0.07, color: '#34d399' },
-        { size: 2.6, opacity: 0.03, color: '#6ee7b7' }].map((g, i) => (
+      {/* Gold accent dot (like the logo dot) */}
+      <mesh position={[0.85, -0.65, 0.3]}>
+        <sphereGeometry args={[0.08, 16, 16]} />
+        <meshStandardMaterial
+          emissive={BRAND.gold}
+          emissiveIntensity={6}
+          color={BRAND.gold}
+          toneMapped={false}
+        />
+      </mesh>
+
+      {/* Corona glow layers */}
+      {[
+        { size: 1.4, opacity: 0.15, color: BRAND.teal },
+        { size: 1.9, opacity: 0.07, color: BRAND.tealLight },
+        { size: 2.6, opacity: 0.03, color: BRAND.tealGlow },
+      ].map((g, i) => (
         <mesh key={i} ref={coronaRefs[i]}>
           <sphereGeometry args={[g.size, 32, 32]} />
           <meshBasicMaterial
@@ -134,15 +187,14 @@ function Sun() {
 }
 
 /* ═══════════════════════════════════════════
-   SOLAR FLARE PARTICLES
-   Instanced particles orbiting close to the sun
+   SOLAR PARTICLES — round spheres orbiting sun
    ═══════════════════════════════════════════ */
 
 function SolarParticles() {
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-  const count = isMobile ? 60 : 120
+  const count = isMobile ? 50 : 100
 
   const particles = useMemo(() => {
     return Array.from({ length: count }, () => ({
@@ -181,14 +233,13 @@ function SolarParticles() {
   return (
     <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
       <sphereGeometry args={[0.025, 6, 6]} />
-      <meshBasicMaterial color="#34d399" transparent opacity={0.5} blending={THREE.AdditiveBlending} />
+      <meshBasicMaterial color={BRAND.tealLight} transparent opacity={0.5} blending={THREE.AdditiveBlending} />
     </instancedMesh>
   )
 }
 
 /* ═══════════════════════════════════════════
-   ORBIT RING
-   Visible orbital path (faint ellipse)
+   ORBIT RING — visible orbital path
    ═══════════════════════════════════════════ */
 
 function OrbitRing({ radius, color, opacity = 0.08, tilt = 0 }: {
@@ -197,10 +248,8 @@ function OrbitRing({ radius, color, opacity = 0.08, tilt = 0 }: {
   const matRef = useRef<THREE.MeshBasicMaterial>(null)
   const entryRef = useRef(0)
 
-  useFrame(({ clock }) => {
+  useFrame(() => {
     if (!sceneVisible.current) return
-    const t = clock.getElapsedTime()
-    // Fade in orbits gradually
     entryRef.current = Math.min(1, entryRef.current + 0.008)
     if (matRef.current) {
       matRef.current.opacity = opacity * entryRef.current
@@ -216,80 +265,140 @@ function OrbitRing({ radius, color, opacity = 0.08, tilt = 0 }: {
 }
 
 /* ═══════════════════════════════════════════
-   PLANET
-   A round planet orbiting the sun
+   PRODUCT PLANET
+   Morphs from sphere → product shape
    ═══════════════════════════════════════════ */
 
-function Planet({ config }: { config: PlanetConfig }) {
+function ProductPlanet({ config }: { config: ProductPlanet }) {
   const groupRef = useRef<THREE.Group>(null)
-  const meshRef = useRef<THREE.Mesh>(null)
+  const sphereRef = useRef<THREE.Mesh>(null)
+  const morphRef = useRef<THREE.Mesh>(null)
   const glowRef = useRef<THREE.Mesh>(null)
   const ringRef = useRef<THREE.Mesh>(null)
   const [hovered, setHovered] = useState(false)
   const scaleRef = useRef(0.01)
-  const entryStarted = useRef(false)
+  const morphProgressRef = useRef(0) // 0 = sphere, 1 = product shape
+  const [showLabel, setShowLabel] = useState(false)
 
   useFrame(({ clock }) => {
     if (!sceneVisible.current) return
     const t = clock.getElapsedTime()
 
-    // Entry animation: scale up from 0
-    const entryDelay = 2.0
+    // Entry animation
+    const entryDelay = 1.5
     if (t > entryDelay) {
-      entryStarted.current = true
       scaleRef.current += (1 - scaleRef.current) * 0.03
     }
     const entry = Math.min(1, scaleRef.current)
+
+    // Morph progress: sphere → product shape
+    if (t > config.morphDelay) {
+      morphProgressRef.current = Math.min(
+        1,
+        morphProgressRef.current + (1 / (config.morphDuration * 60))
+      )
+    }
+    const morph = morphProgressRef.current
+    // Smooth easing for morph
+    const smoothMorph = morph < 0.5
+      ? 4 * morph * morph * morph
+      : 1 - Math.pow(-2 * morph + 2, 3) / 2
 
     // Orbit position
     const angle = t * config.speed
     const x = Math.cos(angle) * config.orbitRadius
     const z = Math.sin(angle) * config.orbitRadius
-    const y = Math.sin(angle * 0.5) * 0.15 // slight vertical wobble
+    const y = Math.sin(angle * 0.5) * 0.15 + Math.sin(t * 0.3) * 0.08
 
     if (groupRef.current) {
       groupRef.current.position.set(x, y, z)
     }
 
-    // Self-rotation
-    if (meshRef.current) {
-      meshRef.current.rotation.y = t * 0.4
-      meshRef.current.rotation.x = config.tilt
-      const hoverScale = hovered ? 1.4 : 1
-      meshRef.current.scale.setScalar(entry * hoverScale)
+    // Sphere: fades out as morph progresses
+    if (sphereRef.current) {
+      sphereRef.current.rotation.y = t * 0.3
+      const sphereScale = entry * (1 - smoothMorph)
+      sphereRef.current.scale.setScalar(Math.max(0.001, sphereScale))
+      ;(sphereRef.current.material as THREE.MeshStandardMaterial).opacity = 1 - smoothMorph
+    }
+
+    // Morphed product shape: fades in
+    if (morphRef.current) {
+      morphRef.current.rotation.y = t * 0.4
+      morphRef.current.rotation.x = config.tilt
+      const productScale = entry * smoothMorph
+      morphRef.current.scale.setScalar(Math.max(0.001, productScale))
+      ;(morphRef.current.material as THREE.MeshStandardMaterial).opacity = smoothMorph
     }
 
     // Glow
     if (glowRef.current) {
       const glowPulse = Math.sin(t * 2) * 0.08 + 1
       glowRef.current.scale.setScalar(entry * glowPulse * 2)
-      ;(glowRef.current.material as THREE.MeshBasicMaterial).opacity = hovered ? 0.1 : 0.04
+      ;(glowRef.current.material as THREE.MeshBasicMaterial).opacity = hovered ? 0.12 : 0.04
     }
 
-    // Planet ring (Saturn-like)
+    // Ring
     if (ringRef.current && config.hasRing) {
       ringRef.current.rotation.x = Math.PI / 2.5
       ringRef.current.rotation.z = Math.sin(t * 0.2) * 0.05
-      ringRef.current.scale.setScalar(entry)
-      ;(ringRef.current.material as THREE.MeshBasicMaterial).opacity = hovered ? 0.25 : 0.12
+      ringRef.current.scale.setScalar(entry * (0.5 + smoothMorph * 0.5))
+      ;(ringRef.current.material as THREE.MeshBasicMaterial).opacity = (hovered ? 0.3 : 0.15) * entry
     }
+
+    // Show label after morph completes
+    setShowLabel(smoothMorph > 0.6 && entry > 0.5)
   })
+
+  // Render different morph target geometries based on product type
+  const renderMorphGeometry = () => {
+    switch (config.morphType) {
+      case 'capsule':
+        return <capsuleGeometry args={[config.radius * 0.7, config.radius * 1.2, 16, 32]} />
+      case 'octahedron':
+        return <octahedronGeometry args={[config.radius, 0]} />
+      case 'cube':
+        return <boxGeometry args={[config.radius * 1.4, config.radius * 1.4, config.radius * 1.4]} />
+      default:
+        return <sphereGeometry args={[config.radius, 48, 48]} />
+    }
+  }
+
+  const hoverScale = hovered ? 1.3 : 1
 
   return (
     <group ref={groupRef}>
-      {/* Planet body - ROUND sphere */}
-      <mesh
-        ref={meshRef}
-        onPointerOver={(e) => { e.stopPropagation(); setHovered(true) }}
-        onPointerOut={() => setHovered(false)}
-      >
+      {/* SPHERE — the starting circle form */}
+      <mesh ref={sphereRef}>
         <sphereGeometry args={[config.radius, 48, 48]} />
         <meshStandardMaterial
           color={config.color}
           emissive={config.emissiveColor}
-          emissiveIntensity={hovered ? 2 : config.emissiveIntensity}
+          emissiveIntensity={hovered ? 2 : 0.5}
+          transparent
+          opacity={1}
           roughness={0.3}
           metalness={0.2}
+          toneMapped={false}
+        />
+      </mesh>
+
+      {/* MORPHED PRODUCT SHAPE — the end form */}
+      <mesh
+        ref={morphRef}
+        onPointerOver={(e) => { e.stopPropagation(); setHovered(true) }}
+        onPointerOut={() => setHovered(false)}
+        scale={0.001}
+      >
+        {renderMorphGeometry()}
+        <meshStandardMaterial
+          color={config.morphColor}
+          emissive={config.morphColor}
+          emissiveIntensity={hovered ? 3 : 1}
+          transparent
+          opacity={0}
+          roughness={0.25}
+          metalness={0.3}
           toneMapped={false}
         />
       </mesh>
@@ -309,18 +418,18 @@ function Planet({ config }: { config: PlanetConfig }) {
       {/* Saturn-like ring for Dayn Flow */}
       {config.hasRing && (
         <mesh ref={ringRef}>
-          <torusGeometry args={[config.radius * 1.8, 0.03, 8, 64]} />
+          <torusGeometry args={[config.radius * 1.8, 0.025, 8, 64]} />
           <meshBasicMaterial
-            color={config.ringColor || config.color}
+            color={config.ringColor}
             transparent
-            opacity={0.12}
+            opacity={0.15}
             blending={THREE.AdditiveBlending}
           />
         </mesh>
       )}
 
-      {/* Hover label */}
-      {hovered && config.label && (
+      {/* Product label */}
+      {showLabel && (
         <Html center distanceFactor={10} style={{ pointerEvents: 'none' }}>
           <div
             className="px-4 py-2 rounded-full text-center whitespace-nowrap"
@@ -331,10 +440,10 @@ function Planet({ config }: { config: PlanetConfig }) {
               boxShadow: `0 0 30px ${config.color}25, 0 0 60px ${config.color}10`,
             }}
           >
-            <div className="text-xs font-bold tracking-widest" style={{ color: config.color }}>
+            <div className="text-xs font-bold tracking-widest" style={{ color: config.morphColor }}>
               {config.label}
             </div>
-            <div className="text-[10px] text-zinc-400 mt-0.5">Product Platform</div>
+            <div className="text-[10px] text-zinc-400 mt-0.5">{config.sublabel}</div>
           </div>
         </Html>
       )}
@@ -343,15 +452,14 @@ function Planet({ config }: { config: PlanetConfig }) {
 }
 
 /* ═══════════════════════════════════════════
-   AMBIENT STARDUST
-   Distant particles for depth
+   AMBIENT DUST
    ═══════════════════════════════════════════ */
 
 function AmbientDust() {
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-  const count = isMobile ? 40 : 80
+  const count = isMobile ? 30 : 60
 
   const particles = useMemo(() => {
     return Array.from({ length: count }, () => ({
@@ -388,13 +496,13 @@ function AmbientDust() {
   return (
     <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
       <sphereGeometry args={[0.018, 4, 4]} />
-      <meshBasicMaterial color="#10b981" transparent opacity={0.25} />
+      <meshBasicMaterial color={BRAND.teal} transparent opacity={0.25} />
     </instancedMesh>
   )
 }
 
 /* ═══════════════════════════════════════════
-   FUTURE LABS LABEL ON SUN
+   SUN LABEL
    ═══════════════════════════════════════════ */
 
 function SunLabel() {
@@ -410,10 +518,19 @@ function SunLabel() {
     <Html center position={[0, -1.8, 0]} distanceFactor={8} style={{ pointerEvents: 'none' }}>
       <div className="text-center">
         <div
-          className="text-[10px] font-bold tracking-[0.3em] text-emerald-400/70 uppercase"
-          style={{ textShadow: '0 0 20px rgba(16,185,129,0.4)' }}
+          className="text-[10px] font-bold tracking-[0.3em] uppercase"
+          style={{
+            color: `${BRAND.tealLight}b3`,
+            textShadow: `0 0 20px ${BRAND.teal}66`,
+          }}
         >
           Future Labs
+        </div>
+        <div
+          className="text-[8px] tracking-[0.2em] uppercase mt-0.5"
+          style={{ color: `${BRAND.gold}99` }}
+        >
+          Software Technologies
         </div>
       </div>
     </Html>
@@ -425,16 +542,11 @@ function SunLabel() {
    ═══════════════════════════════════════════ */
 
 function SceneLighting() {
-  return (
-    <>
-      <ambientLight intensity={0.06} />
-    </>
-  )
+  return <ambientLight intensity={0.06} />
 }
 
 /* ═══════════════════════════════════════════
    CAMERA CONTROLLER
-   Mouse parallax + scroll-driven zoom out
    ═══════════════════════════════════════════ */
 
 function CameraController() {
@@ -458,11 +570,8 @@ function CameraController() {
     const vh = window.innerHeight
     const sp = Math.min(1, scrollY / (vh * 2.5))
 
-    // Camera zooms out on scroll
     const z = THREE.MathUtils.lerp(9, 16, sp)
-    // Slight upward shift on scroll
     const baseY = THREE.MathUtils.lerp(0.5, 1.5, sp)
-    // Mouse parallax reduces with scroll
     const parallaxStrength = 1 - sp * 0.7
     const x = mouse.current.x * 0.6 * parallaxStrength
     const y = baseY - mouse.current.y * 0.35 * parallaxStrength
@@ -510,30 +619,33 @@ export function SolarSystemScene() {
         <SceneLighting />
         <CameraController />
 
-        {/* The Sun — Future Labs */}
+        {/* ☀️ The Sun — Future Labs */}
         <Sun />
         <SunLabel />
 
         {/* Solar particles around the sun */}
         <SolarParticles />
 
-        {/* Dayn Flow orbit ring */}
-        <OrbitRing radius={PLANETS[0].orbitRadius} color={PLANETS[0].color} opacity={0.1} />
-
-        {/* Future (empty) orbit rings */}
-        {FUTURE_ORBITS.map((orbit, i) => (
-          <OrbitRing key={i} radius={orbit.radius} color={orbit.color} opacity={orbit.opacity} />
+        {/* Orbit rings for each product */}
+        {PRODUCT_PLANETS.map((planet) => (
+          <OrbitRing
+            key={`orbit-${planet.name}`}
+            radius={planet.orbitRadius}
+            color={planet.color}
+            opacity={0.1}
+            tilt={planet.tilt}
+          />
         ))}
 
-        {/* Planets */}
-        {PLANETS.map((planet) => (
-          <Planet key={planet.name} config={planet} />
+        {/* Product planets */}
+        {PRODUCT_PLANETS.map((planet) => (
+          <ProductPlanet key={planet.name} config={planet} />
         ))}
 
         {/* Ambient dust */}
         <AmbientDust />
 
-        {/* Starfield background */}
+        {/* Starfield */}
         <Stars
           radius={60}
           depth={70}
@@ -545,7 +657,7 @@ export function SolarSystemScene() {
         />
       </Canvas>
 
-      {/* Vignette overlay for depth */}
+      {/* Vignette */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{

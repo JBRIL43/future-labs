@@ -51,31 +51,31 @@ export function EthiopianCulturalOverlay() {
       {/* ===== FLOATING ETHIOPIAN CROSSES (CSS animated) ===== */}
       <div className="absolute" style={{ top: '12%', left: '6%', opacity: 0.04, animation: 'eth-cross-float 40s ease-in-out infinite' }}>
         <svg width="60" height="60" viewBox={ETHIOPIAN_CROSSES[0].viewBox} fill="none">
-          <path d={ETHIOPIAN_CROSSES[0].path} stroke="rgba(16, 185, 129, 1)" strokeWidth="0.8" />
+          <path d={ETHIOPIAN_CROSSES[0].path} stroke="rgba(13, 148, 136, 1)" strokeWidth="0.8" />
         </svg>
       </div>
 
       <div className="absolute" style={{ top: '30%', right: '8%', opacity: 0.035, animation: 'drift 35s linear infinite' }}>
         <svg width="45" height="45" viewBox={ETHIOPIAN_CROSSES[1].viewBox} fill="none">
-          <path d={ETHIOPIAN_CROSSES[1].path} stroke="rgba(16, 185, 129, 1)" strokeWidth="0.8" />
+          <path d={ETHIOPIAN_CROSSES[1].path} stroke="rgba(13, 148, 136, 1)" strokeWidth="0.8" />
         </svg>
       </div>
 
       <div className="absolute" style={{ bottom: '25%', left: '10%', opacity: 0.03, animation: 'eth-cross-float 45s ease-in-out infinite reverse' }}>
         <svg width="55" height="55" viewBox={ETHIOPIAN_CROSSES[2].viewBox} fill="none">
-          <path d={ETHIOPIAN_CROSSES[2].path} stroke="rgba(16, 185, 129, 1)" strokeWidth="0.8" />
+          <path d={ETHIOPIAN_CROSSES[2].path} stroke="rgba(13, 148, 136, 1)" strokeWidth="0.8" />
         </svg>
       </div>
 
       <div className="absolute" style={{ bottom: '15%', right: '12%', opacity: 0.025, animation: 'spin-slow 50s linear infinite' }}>
         <svg width="70" height="70" viewBox={ETHIOPIAN_CROSSES[3].viewBox} fill="none">
-          <path d={ETHIOPIAN_CROSSES[3].path} stroke="rgba(16, 185, 129, 1)" strokeWidth="0.6" />
+          <path d={ETHIOPIAN_CROSSES[3].path} stroke="rgba(13, 148, 136, 1)" strokeWidth="0.6" />
         </svg>
       </div>
 
       <div className="absolute" style={{ top: '50%', left: '3%', opacity: 0.02, animation: 'eth-cross-float 60s ease-in-out infinite' }}>
         <svg width="90" height="90" viewBox={ETHIOPIAN_CROSSES[0].viewBox} fill="none">
-          <path d={ETHIOPIAN_CROSSES[0].path} stroke="rgba(16, 185, 129, 1)" strokeWidth="0.5" />
+          <path d={ETHIOPIAN_CROSSES[0].path} stroke="rgba(13, 148, 136, 1)" strokeWidth="0.5" />
         </svg>
       </div>
 
@@ -104,7 +104,7 @@ export function EthiopianCulturalOverlay() {
       {/* ===== TRICOLOR ACCENT LINE ===== */}
       <div className="absolute top-0 left-0 right-0 h-px">
         <div className="w-full h-full" style={{
-          background: 'linear-gradient(90deg, transparent 5%, rgba(16, 185, 129, 0.15) 20%, rgba(245, 158, 11, 0.12) 50%, rgba(239, 68, 68, 0.1) 80%, transparent 95%)',
+          background: 'linear-gradient(90deg, transparent 5%, rgba(13, 148, 136, 0.15) 20%, rgba(245, 158, 11, 0.12) 50%, rgba(239, 68, 68, 0.1) 80%, transparent 95%)',
         }} />
       </div>
 
@@ -152,7 +152,7 @@ export function EthiopianCulturalOverlay() {
                 width="16" height="16"
                 transform={`rotate(45 ${60 + col * 20} ${60 + row * 20})`}
                 fill="none"
-                stroke="rgba(16, 185, 129, 1)"
+                stroke="rgba(13, 148, 136, 1)"
                 strokeWidth="0.4"
               />
             ))
