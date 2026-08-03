@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
+import { useEffect, useRef } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { HeroParticleImage } from '@/components/HeroParticleImage'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -27,21 +27,23 @@ const itemVariants = {
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
+  const blobRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] })
-  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
-  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.2])
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
   const contentY = useTransform(scrollYProgress, [0, 0.7], [0, -60])
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
 
+  // Direct mouse tracking — no React state, no lag
   useEffect(() => {
+    const blob = blobRef.current
+    if (!blob) return
+
     const handleMouse = (e: MouseEvent) => {
-      setMousePos({
-        x: (e.clientX / window.innerWidth - 0.5) * 2,
-        y: (e.clientY / window.innerHeight - 0.5) * 2,
-      })
+      const nx = (e.clientX / window.innerWidth - 0.5) * 2
+      const ny = (e.clientY / window.innerHeight - 0.5) * 2
+      // Direct DOM write — zero React re-renders, zero lag
+      blob.style.transform = `translate(${nx * 15}px, ${ny * 15}px)`
     }
-    window.addEventListener('mousemove', handleMouse)
+    window.addEventListener('mousemove', handleMouse, { passive: true })
     return () => window.removeEventListener('mousemove', handleMouse)
   }, [])
 
@@ -51,28 +53,17 @@ export function Hero() {
       ref={sectionRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      {/* 3D Parallax Background Image */}
-      <motion.div
-        className="absolute inset-0 z-0"
-        style={{ y: bgY, scale: bgScale }}
-      >
-        <div className="absolute inset-0" style={{
-          transform: `perspective(1000px) rotateX(${mousePos.y * 2}deg) rotateY(${mousePos.x * 2}deg) scale(1.1)`,
-          transition: 'transform 0.3s ease-out',
-        }}>
-          <Image
-            src="/hero-bg.png"
-            alt="Future Labs hero background"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
-      </motion.div>
+      {/* Particle Image Background — reacts to cursor */}
+      <div className="absolute inset-0 z-0" style={{
+        maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+      }}>
+        <HeroParticleImage />
+      </div>
 
       {/* Multi-layer gradient overlay */}
       <div className="absolute inset-0 z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/50 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/50 to-background" />
         <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-transparent to-background/60" />
         {/* 3D vignette */}
         <div className="absolute inset-0" style={{
@@ -81,29 +72,34 @@ export function Hero() {
       </div>
 
       {/* Morphing blob behind content */}
-      <motion.div
+      <div
+        ref={blobRef}
         className="absolute z-[9] w-[500px] h-[500px] md:w-[700px] md:h-[700px]"
         style={{
           left: '50%',
           top: '50%',
           marginLeft: '-250px',
           marginTop: '-250px',
-          transform: `translate(${mousePos.x * 15}px, ${mousePos.y * 15}px)`,
-          transition: 'transform 0.5s ease-out',
+          transition: 'transform 0.15s ease-out',
+          willChange: 'transform',
         }}
-        animate={{
-          borderRadius: ['40% 60% 60% 40% / 60% 30% 70% 40%', '60% 40% 30% 70% / 50% 60% 30% 60%', '40% 60% 60% 40% / 60% 30% 70% 40%'],
-          rotate: [0, 90, 180, 270, 360],
-          scale: [1, 1.1, 1, 1.05, 1],
-        }}
-        transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
       >
-        <div className="w-full h-full" style={{
-          background: 'radial-gradient(circle, rgba(16,185,129,0.06) 0%, rgba(16,185,129,0.02) 40%, transparent 70%)',
-          borderRadius: 'inherit',
-          filter: 'blur(60px)',
-        }} />
-      </motion.div>
+        <motion.div
+          className="w-full h-full"
+          animate={{
+            borderRadius: ['40% 60% 60% 40% / 60% 30% 70% 40%', '60% 40% 30% 70% / 50% 60% 30% 60%', '40% 60% 60% 40% / 60% 30% 70% 40%'],
+            rotate: [0, 90, 180, 270, 360],
+            scale: [1, 1.1, 1, 1.05, 1],
+          }}
+          transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+        >
+          <div className="w-full h-full" style={{
+            background: 'radial-gradient(circle, rgba(16,185,129,0.06) 0%, rgba(16,185,129,0.02) 40%, transparent 70%)',
+            borderRadius: 'inherit',
+            filter: 'blur(60px)',
+          }} />
+        </motion.div>
+      </div>
 
       {/* Content with parallax */}
       <motion.div

@@ -18,6 +18,7 @@ export function CustomCursor() {
       posRef.current = { x: e.clientX, y: e.clientY }
       if (!isVisible) setIsVisible(true)
 
+      // Dot follows instantly — direct DOM write, no React state
       if (cursorRef.current) {
         cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`
       }
@@ -26,12 +27,12 @@ export function CustomCursor() {
     const handleMouseEnter = () => setIsVisible(true)
     const handleMouseLeave = () => setIsVisible(false)
 
-    // Smooth follower animation
+    // Smooth follower — snappy lerp (0.35 = fluid but responsive)
     const animate = () => {
       const fp = followerPosRef.current
       const tp = posRef.current
-      fp.x += (tp.x - fp.x) * 0.12
-      fp.y += (tp.y - fp.y) * 0.12
+      fp.x += (tp.x - fp.x) * 0.35
+      fp.y += (tp.y - fp.y) * 0.35
 
       if (followerRef.current) {
         followerRef.current.style.transform = `translate(${fp.x}px, ${fp.y}px)`
@@ -40,7 +41,7 @@ export function CustomCursor() {
     }
     animate()
 
-    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mousemove', handleMouseMove, { passive: true })
     document.addEventListener('mouseenter', handleMouseEnter)
     document.addEventListener('mouseleave', handleMouseLeave)
 
@@ -54,13 +55,14 @@ export function CustomCursor() {
 
   return (
     <>
-      {/* Main cursor dot */}
+      {/* Main cursor dot — instant, no transition */}
       <div
         ref={cursorRef}
         className="fixed top-0 left-0 z-[9999] pointer-events-none"
         style={{
           opacity: isVisible ? 1 : 0,
-          transition: 'opacity 0.3s ease',
+          transition: 'opacity 0.2s ease',
+          willChange: 'transform',
         }}
       >
         <div className="relative -translate-x-1/2 -translate-y-1/2">
@@ -69,13 +71,14 @@ export function CustomCursor() {
           }} />
         </div>
       </div>
-      {/* Follower ring */}
+      {/* Follower ring — snappy, not laggy */}
       <div
         ref={followerRef}
         className="fixed top-0 left-0 z-[9998] pointer-events-none"
         style={{
           opacity: isVisible ? 1 : 0,
-          transition: 'opacity 0.3s ease',
+          transition: 'opacity 0.2s ease',
+          willChange: 'transform',
         }}
       >
         <div className="relative -translate-x-1/2 -translate-y-1/2">

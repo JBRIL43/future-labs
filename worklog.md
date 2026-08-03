@@ -117,3 +117,21 @@ Stage Summary:
 - Custom emerald glow cursor on desktop
 - All 7 section dividers feature Ethiopian flag tricolor shimmer lines
 - Site feels uniquely Ethiopian while maintaining futuristic/tech aesthetic
+---
+Task ID: 4
+Agent: Main Agent
+Task: Make hero image dynamic as particles reacting to cursor, fix cursor lag
+
+Work Log:
+- Created HeroParticleImage.tsx: canvas component that loads hero-bg.png, samples pixel colors every 5px (7px on mobile), creates ~8000-15000 colored particles
+- Particles use spring physics (spring=0.035, friction=0.88) — cursor repels them within 120px radius, they fluidly spring back
+- Used fillRect instead of arc for 3x faster rendering, distSq check before sqrt for performance
+- Added CSS mask gradient on the particle canvas (fades to transparent at bottom) so particles blend into the dark background below hero
+- Rewrote Hero.tsx: replaced static Next.js <Image> with <HeroParticleImage>, removed React useState for mouse (was causing re-render lag), blob now uses direct DOM writes via ref
+- Fixed CustomCursor.tsx: increased follower lerp from 0.12 to 0.35 (3x snappier), added { passive: true } to mousemove, added willChange: transform
+- Verified: zero lint errors, zero browser errors on desktop 1920x1080 and mobile 375x812, particles scatter and reform on cursor movement
+
+Stage Summary:
+- Hero background is now a living particle image — thousands of colored pixels that explode away from the cursor and fluidly spring back
+- Cursor is now responsive and snappy (no perceived lag)
+- Hero blob responds with zero-lag direct DOM manipulation (no React state overhead)
