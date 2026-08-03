@@ -159,3 +159,19 @@ Stage Summary:
 - Effect is subtle: low opacity, small displacement, gentle spring return
 - Hero retains its dramatic image-particle effect; the rest of the site has the ambient version
 - Performance optimized: no per-frame gradient creation, distSq before sqrt, batched draw calls
+---
+Task ID: 6
+Agent: Main Agent
+Task: Fix animation lag and cursor responsiveness
+
+Work Log:
+- HeroParticleImage: added active-zone culling (only compute physics within 3x repel radius of cursor), increased gap 5→7 desktop / 7→9 mobile (particles 8000→~3500), snap-to-home when cursor inactive (zero-overhead fast path), quick-snap with 3x spring for particles leaving active zone
+- AnimatedBackground: removed O(n²) particle-to-particle connection loop entirely, removed cursor-to-particle connections, reduced particle count 160→120, added same active-zone culling, removed ambient drift from idle particles, pre-computed ACTIVE_ZONE_SQ and RADIUS_SQ constants
+- CustomCursor: increased follower lerp 0.35→0.55, removed all CSS transitions (instant opacity), removed box-shadow complexity, reduced ring size 8→7, moved animation to dedicated rAF loop separate from mousemove handler
+- All three components now use { passive: true } on mousemove listeners
+- Verified: zero lint errors, zero browser errors, tested rapid mouse movements + scroll + mobile 375x812
+
+Stage Summary:
+- Hero: ~60% of particles skip physics entirely per frame (far from cursor), cursor-inactive = instant snap (no per-particle math)
+- Background: removed the heaviest O(n²) loop, only ~15% of particles get physics per frame
+- Cursor: ring follows at 55% lerp (snappy, not laggy), dot is instant
