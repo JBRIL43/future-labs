@@ -8,14 +8,14 @@ import { TechStack } from '@/components/sections/TechStack';
 import { Careers } from '@/components/sections/Careers';
 import { Contact } from '@/components/sections/Contact';
 import { Footer } from '@/components/sections/Footer';
-import { FutureCoreScene } from '@/components/FutureCoreScene';
+import { SolarSystemScene } from '@/components/SolarSystemScene';
 import { EthiopianCulturalOverlay } from '@/components/EthiopianCulturalOverlay';
 import { CustomCursor } from '@/components/CustomCursor';
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col relative">
-      <FutureCoreScene />
+      <SolarSystemScene />
       <EthiopianCulturalOverlay />
       <CustomCursor />
       <Navigation />

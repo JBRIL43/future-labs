@@ -175,3 +175,30 @@ Stage Summary:
 - Hero: ~60% of particles skip physics entirely per frame (far from cursor), cursor-inactive = instant snap (no per-particle math)
 - Background: removed the heaviest O(n²) loop, only ~15% of particles get physics per frame
 - Cursor: ring follows at 55% lerp (snappy, not laggy), dot is instant
+---
+Task ID: 7
+Agent: Main Agent
+Task: Performance optimization + Solar System 3D hero (Future Labs = Sun, Dayn Flow = Planet)
+
+Work Log:
+- Removed AnimatedBackground from page.tsx (redundant 2D canvas competing with R3F WebGL for GPU time)
+- Created SolarSystemScene.tsx replacing FutureCoreScene.tsx:
+  - Sun (Future Labs): large glowing emerald sphere (r=1.0) with 3 corona glow layers, pulsing point lights, "Future Labs" label
+  - Dayn Flow planet: round sphere (r=0.35) with Saturn-like ring, orbiting at radius 4.2, golden/amber color
+  - 3 future orbit rings (empty, for upcoming products) at radii 2.8, 5.8, 7.2
+  - Solar flare particles: 120 instanced particles orbiting close to the sun
+  - Ambient dust: 80 instanced particles for depth
+  - Mouse parallax camera controller + scroll-driven zoom out
+  - Scroll opacity fade (scene fades as user scrolls down)
+  - Star field background (500 stars)
+- Updated Hero.tsx badge: "Technology Innovation Lab" → "The Solar System of Innovation"
+- Cursor already at 0.85 lerp (fast, no change needed)
+- EthiopianCulturalOverlay already using pure CSS animations (no change needed)
+- Verified: zero lint errors, zero browser console errors, VLM confirmed sun + orbiting planet + ring visible
+
+Stage Summary:
+- Removed competing 2D canvas — only R3F WebGL renders the background now (major perf win)
+- Solar system visual: green sun (Future Labs) at center, golden planet (Dayn Flow) with Saturn ring orbiting it
+- 3 empty orbit paths hint at future products
+- All sections below hero remain fully functional
+- Clean 60fps target with instanced meshes and scene visibility culling

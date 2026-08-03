@@ -59,7 +59,7 @@ export function Hero() {
               boxShadow: '0 0 20px rgba(16,185,129,0.1), inset 0 1px 0 rgba(16,185,129,0.1)',
             }}
           >
-            <span className="relative z-10">Technology Innovation Lab</span>
+            <span className="relative z-10">The Solar System of Innovation</span>
             <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10" />
           </Badge>
         </motion.div>

@@ -1,0 +1,816 @@
+     1→'use client'
+     2→
+     3→import { Canvas, useFrame, useThree } from '@react-three/fiber'
+     4→import { Html, Stars } from '@react-three/drei'
+     5→import { useRef, useMemo, useState, useEffect } from 'react'
+     6→import * as THREE from 'three'
+     7→
+     8→/* ═══════════════════════════════════════════
+     9→   CONSTANTS & TYPES
+    10→   ═══════════════════════════════════════════ */
+    11→
+    12→const TECH_MODULES = [
+    13→  { name: 'Artificial Intelligence', icon: '🤖', color: '#10b981', desc: 'Intelligent systems & ML' },
+    14→  { name: 'Software Engineering', icon: '🌐', color: '#06b6d4', desc: 'Full-stack development' },
+    15→  { name: 'Mobile Development', icon: '📱', color: '#a855f7', desc: 'Native & cross-platform' },
+    16→  { name: 'Blockchain', icon: '⛓️', color: '#f59e0b', desc: 'Decentralized solutions' },
+    17→  { name: 'Cloud Computing', icon: '☁️', color: '#38bdf8', desc: 'Scalable infrastructure' },
+    18→  { name: 'Automation', icon: '⚡', color: '#f43f5e', desc: 'AI-powered workflows' },
+    19→] as const
+    20→
+    21→const MODULE_COUNT = TECH_MODULES.length
+    22→const ORBIT_RADIUS = 3.0
+    23→const ENTRY_DURATION = 3.5
+    24→
+    25→export const sceneVisible = { current: true }
+    26→
+    27→/* ═══════════════════════════════════════════
+    28→   HELPERS
+    29→   ═══════════════════════════════════════════ */
+    30→
+    31→function easeOutCubic(t: number): number {
+    32→  return 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 3)
+    33→}
+    34→
+    35→function easeOutExpo(t: number): number {
+    36→  return t >= 1 ? 1 : 1 - Math.pow(2, -10 * Math.min(1, Math.max(0, t)))
+    37→}
+    38→
+    39→function getModulePos(index: number, time: number, radius: number) {
+    40→  const baseAngle = (index / MODULE_COUNT) * Math.PI * 2
+    41→  const speed = 0.12 + index * 0.015
+    42→  const angle = baseAngle + time * speed
+    43→  const yBase = Math.sin(index * 1.7) * 0.25
+    44→  const yFloat = Math.sin(time * 0.4 + index * 0.8) * 0.15
+    45→  return new THREE.Vector3(
+    46→    Math.cos(angle) * radius,
+    47→    yBase + yFloat,
+    48→    Math.sin(angle) * radius
+    49→  )
+    50→}
+    51→
+    52→/* ═══════════════════════════════════════════
+    53→   ENERGY CORE
+    54→   The glowing heart of Ethiopia's digital future
+    55→   ═══════════════════════════════════════════ */
+    56→
+    57→function EnergyCore() {
+    58→  const coreRef = useRef<THREE.Mesh>(null)
+    59→  const glowRefs = [
+    60→    useRef<THREE.Mesh>(null),
+    61→    useRef<THREE.Mesh>(null),
+    62→    useRef<THREE.Mesh>(null),
+    63→  ]
+    64→  const innerLightRef = useRef<THREE.PointLight>(null)
+    65→
+    66→  useFrame(({ clock }) => {
+    67→    const t = clock.getElapsedTime()
+    68→    if (!sceneVisible.current) return
+    69→
+    70→    const entry = easeOutExpo(t / 1.0)
+    71→    const pulse = Math.sin(t * 2) * 0.06 + 1
+    72→
+    73→    if (coreRef.current) {
+    74→      coreRef.current.scale.setScalar(entry * pulse)
+    75→    }
+    76→
+    77→    const glowPulses = [
+    78→      Math.sin(t * 1.5 + 0.5) * 0.05 + 1,
+    79→      Math.sin(t * 1.2 + 1.0) * 0.04 + 1,
+    80→      Math.sin(t * 0.8 + 2.0) * 0.03 + 1,
+    81→    ]
+    82→
+    83→    glowRefs.forEach((ref, i) => {
+    84→      if (!ref.current) return
+    85→      ref.current.scale.setScalar(entry * glowPulses[i])
+    86→    })
+    87→
+    88→    if (innerLightRef.current) {
+    89→      innerLightRef.current.intensity = 3 * entry + Math.sin(t * 2) * 0.5
+    90→    }
+    91→  })
+    92→
+    93→  return (
+    94→    <group>
+    95→      <pointLight ref={innerLightRef} color="#10b981" distance={8} decay={2} intensity={0} />
+    96→      {/* Bright inner core */}
+    97→      <mesh ref={coreRef}>
+    98→        <sphereGeometry args={[0.4, 32, 32]} />
+    99→        <meshStandardMaterial
+   100→          emissive="#10b981"
+   101→          emissiveIntensity={5}
+   102→          color="#34d399"
+   103→          toneMapped={false}
+   104→        />
+   105→      </mesh>
+   106→      {/* Glow layers */}
+   107→      {[
+   108→        { size: 0.65, opacity: 0.18, color: '#10b981', additive: false },
+   109→        { size: 0.9, opacity: 0.07, color: '#34d399', additive: false },
+   110→        { size: 1.3, opacity: 0.03, color: '#6ee7b7', additive: true },
+   111→      ].map((g, i) => (
+   112→        <mesh key={i} ref={glowRefs[i]}>
+   113→          <sphereGeometry args={[g.size, 32, 32]} />
+   114→          <meshBasicMaterial
+   115→            color={g.color}
+   116→            transparent
+   117→            opacity={g.opacity}
+   118→            blending={g.additive ? THREE.AdditiveBlending : THREE.NormalBlending}
+   119→            side={THREE.BackSide}
+   120→          />
+   121→        </mesh>
+   122→      ))}
+   123→    </group>
+   124→  )
+   125→}
+   126→
+   127→/* ═══════════════════════════════════════════
+   128→   CRYSTALLINE SHELL
+   129→   Transparent icosahedron + inner dodecahedron
+   130→   ═══════════════════════════════════════════ */
+   131→
+   132→function CrystallineShell() {
+   133→  const outerRef = useRef<THREE.Mesh>(null)
+   134→  const innerRef = useRef<THREE.Mesh>(null)
+   135→  const outerMat = useRef<THREE.MeshBasicMaterial>(null)
+   136→  const innerMat = useRef<THREE.MeshBasicMaterial>(null)
+   137→
+   138→  useFrame(({ clock }) => {
+   139→    const t = clock.getElapsedTime()
+   140→    if (!sceneVisible.current) return
+   141→
+   142→    const entry = easeOutCubic((t - 0.3) / 1.4)
+   143→
+   144→    if (outerRef.current) {
+   145→      outerRef.current.rotation.y = t * 0.1
+   146→      outerRef.current.rotation.x = Math.sin(t * 0.07) * 0.1
+   147→      outerRef.current.scale.setScalar(entry)
+   148→    }
+   149→    if (outerMat.current) {
+   150→      outerMat.current.opacity = 0.14 * entry
+   151→    }
+   152→    if (innerRef.current) {
+   153→      innerRef.current.rotation.y = -t * 0.07
+   154→      innerRef.current.rotation.z = t * 0.05
+   155→      innerRef.current.scale.setScalar(entry)
+   156→    }
+   157→    if (innerMat.current) {
+   158→      innerMat.current.opacity = 0.06 * entry
+   159→    }
+   160→  })
+   161→
+   162→  return (
+   163→    <group>
+   164→      <mesh ref={outerRef}>
+   165→        <icosahedronGeometry args={[1.6, 1]} />
+   166→        <meshBasicMaterial ref={outerMat} color="#10b981" wireframe transparent opacity={0} />
+   167→      </mesh>
+   168→      <mesh ref={innerRef}>
+   169→        <dodecahedronGeometry args={[1.15, 0]} />
+   170→        <meshBasicMaterial ref={innerMat} color="#06b6d4" wireframe transparent opacity={0} />
+   171→      </mesh>
+   172→    </group>
+   173→  )
+   174→}
+   175→
+   176→/* ═══════════════════════════════════════════
+   177→   HOLOGRAPHIC RINGS
+   178→   Three rotating orbital rings at different angles
+   179→   ═══════════════════════════════════════════ */
+   180→
+   181→function HolographicRings() {
+   182→  const ring1 = useRef<THREE.Mesh>(null)
+   183→  const ring2 = useRef<THREE.Mesh>(null)
+   184→  const ring3 = useRef<THREE.Mesh>(null)
+   185→  const mat1 = useRef<THREE.MeshBasicMaterial>(null)
+   186→  const mat2 = useRef<THREE.MeshBasicMaterial>(null)
+   187→  const mat3 = useRef<THREE.MeshBasicMaterial>(null)
+   188→
+   189→  useFrame(({ clock }) => {
+   190→    const t = clock.getElapsedTime()
+   191→    if (!sceneVisible.current) return
+   192→
+   193→    const entry = easeOutExpo((t - 0.6) / 1.2)
+   194→
+   195→    // Ring 1: XZ plane, clockwise
+   196→    if (ring1.current) {
+   197→      ring1.current.rotation.z = t * 0.25
+   198→      ring1.current.scale.setScalar(entry)
+   199→    }
+   200→    if (mat1.current) mat1.current.opacity = 0.4 * entry
+   201→
+   202→    // Ring 2: tilted
+   203→    if (ring2.current) {
+   204→      ring2.current.rotation.z = t * -0.2
+   205→      ring2.current.rotation.x = Math.PI / 3 + Math.sin(t * 0.15) * 0.08
+   206→      ring2.current.scale.setScalar(entry)
+   207→    }
+   208→    if (mat2.current) mat2.current.opacity = 0.25 * entry
+   209→
+   210→    // Ring 3: other tilt, gold accent
+   211→    if (ring3.current) {
+   212→      ring3.current.rotation.z = t * 0.15
+   213→      ring3.current.rotation.y = Math.PI / 3 + Math.cos(t * 0.1) * 0.08
+   214→      ring3.current.scale.setScalar(entry)
+   215→    }
+   216→    if (mat3.current) mat3.current.opacity = 0.15 * entry
+   217→  })
+   218→
+   219→  return (
+   220→    <group>
+   221→      <mesh ref={ring1} rotation={[Math.PI / 2, 0, 0]}>
+   222→        <torusGeometry args={[2.2, 0.018, 16, 128]} />
+   223→        <meshBasicMaterial ref={mat1} color="#10b981" transparent opacity={0} />
+   224→      </mesh>
+   225→      <mesh ref={ring2} rotation={[Math.PI / 3, Math.PI / 6, 0]}>
+   226→        <torusGeometry args={[2.55, 0.013, 16, 100]} />
+   227→        <meshBasicMaterial ref={mat2} color="#06b6d4" transparent opacity={0} />
+   228→      </mesh>
+   229→      <mesh ref={ring3} rotation={[Math.PI / 4, 0, Math.PI / 3]}>
+   230→        <torusGeometry args={[2.85, 0.009, 16, 100]} />
+   231→        <meshBasicMaterial ref={mat3} color="#f59e0b" transparent opacity={0} />
+   232→      </mesh>
+   233→    </group>
+   234→  )
+   235→}
+   236→
+   237→/* ═══════════════════════════════════════════
+   238→   ORBITING TECH MODULES
+   239→   Six domains orbiting the core
+   240→   ═══════════════════════════════════════════ */
+   241→
+   242→function OrbitingModule({ index }: { index: number }) {
+   243→  const groupRef = useRef<THREE.Group>(null)
+   244→  const meshRef = useRef<THREE.Mesh>(null)
+   245→  const glowRef = useRef<THREE.Mesh>(null)
+   246→  const [hovered, setHovered] = useState(false)
+   247→  const scaleRef = useRef(1)
+   248→  const mod = TECH_MODULES[index]
+   249→
+   250→  useFrame(({ clock }) => {
+   251→    const t = clock.getElapsedTime()
+   252→    if (!sceneVisible.current) return
+   253→
+   254→    // Entry: orbit from center outward
+   255→    const entryDelay = 1.5 + index * 0.18
+   256→    const entryProgress = easeOutCubic((t - entryDelay) / 0.9)
+   257→    const currentRadius = ORBIT_RADIUS * entryProgress
+   258→
+   259→    const pos = getModulePos(index, t, currentRadius)
+   260→
+   261→    if (groupRef.current) {
+   262→      groupRef.current.position.copy(pos)
+   263→    }
+   264→    if (meshRef.current) {
+   265→      meshRef.current.rotation.x = t * 0.4 + index
+   266→      meshRef.current.rotation.y = t * 0.6 + index * 2
+   267→      scaleRef.current += ((hovered ? 1.8 : 1) - scaleRef.current) * 0.1
+   268→      meshRef.current.scale.setScalar(scaleRef.current * entryProgress)
+   269→    }
+   270→    if (glowRef.current) {
+   271→      glowRef.current.scale.setScalar(scaleRef.current * entryProgress * 1.8)
+   272→      ;(glowRef.current.material as THREE.MeshBasicMaterial).opacity = hovered ? 0.12 : 0.04
+   273→    }
+   274→  })
+   275→
+   276→  return (
+   277→    <group ref={groupRef}>
+   278→      <mesh
+   279→        ref={meshRef}
+   280→        onPointerOver={(e) => { e.stopPropagation(); setHovered(true) }}
+   281→        onPointerOut={() => setHovered(false)}
+   282→      >
+   283→        <octahedronGeometry args={[0.15, 0]} />
+   284→        <meshStandardMaterial
+   285→          color={mod.color}
+   286→          emissive={mod.color}
+   287→          emissiveIntensity={hovered ? 3 : 0.5}
+   288→          toneMapped={false}
+   289→        />
+   290→      </mesh>
+   291→      {/* Module glow sphere */}
+   292→      <mesh ref={glowRef}>
+   293→        <sphereGeometry args={[0.28, 16, 16]} />
+   294→        <meshBasicMaterial
+   295→          color={mod.color}
+   296→          transparent
+   297→          opacity={0.04}
+   298→          blending={THREE.AdditiveBlending}
+   299→          side={THREE.BackSide}
+   300→        />
+   301→      </mesh>
+   302→      {/* Hover tooltip */}
+   303→      {hovered && (
+   304→        <Html center distanceFactor={8} style={{ pointerEvents: 'none' }}>
+   305→          <div
+   306→            className="px-3 py-2 rounded-lg text-center whitespace-nowrap"
+   307→            style={{
+   308→              background: 'rgba(5,5,7,0.92)',
+   309→              border: `1px solid ${mod.color}40`,
+   310→              backdropFilter: 'blur(12px)',
+   311→              boxShadow: `0 0 30px ${mod.color}25, 0 0 60px ${mod.color}10`,
+   312→            }}
+   313→          >
+   314→            <div className="text-base mb-0.5">{mod.icon}</div>
+   315→            <div className="text-xs font-semibold" style={{ color: mod.color }}>
+   316→              {mod.name}
+   317→            </div>
+   318→            <div className="text-[10px] text-zinc-400 mt-0.5">{mod.desc}</div>
+   319→          </div>
+   320→        </Html>
+   321→      )}
+   322→    </group>
+   323→  )
+   324→}
+   325→
+   326→/* ═══════════════════════════════════════════
+   327→   ENERGY BEAMS
+   328→   Lines connecting core to each module
+   329→   ═══════════════════════════════════════════ */
+   330→
+   331→/* Pre-allocated buffers & objects for energy beams (module-level, lint-safe) */
+   332→const BEAM_POS = new Float32Array(MODULE_COUNT * 6)
+   333→const PARTICLE_POS = new Float32Array(MODULE_COUNT * 3 * 3)
+   334→let BEAM_ATTR: THREE.BufferAttribute | null = null
+   335→let PARTICLE_ATTR: THREE.BufferAttribute | null = null
+   336→const LINE_MAT = new THREE.LineBasicMaterial({
+   337→  color: '#10b981', transparent: true, opacity: 0, blending: THREE.AdditiveBlending,
+   338→})
+   339→const POINT_MAT = new THREE.PointsMaterial({
+   340→  color: '#34d399', size: 0.04, transparent: true, opacity: 0,
+   341→  blending: THREE.AdditiveBlending, sizeAttenuation: true,
+   342→})
+   343→
+   344→function EnergyBeams() {
+   345→  const [lineObj] = useState(() => {
+   346→    const g = new THREE.BufferGeometry()
+   347→    const attr = new THREE.BufferAttribute(BEAM_POS, 3)
+   348→    g.setAttribute('position', attr)
+   349→    BEAM_ATTR = attr
+   350→    return new THREE.LineSegments(g, LINE_MAT)
+   351→  })
+   352→  const [pointsObj] = useState(() => {
+   353→    const g = new THREE.BufferGeometry()
+   354→    const attr = new THREE.BufferAttribute(PARTICLE_POS, 3)
+   355→    g.setAttribute('position', attr)
+   356→    PARTICLE_ATTR = attr
+   357→    return new THREE.Points(g, POINT_MAT)
+   358→  })
+   359→
+   360→  useFrame(({ clock }) => {
+   361→    const t = clock.getElapsedTime()
+   362→    if (!sceneVisible.current) return
+   363→
+   364→    let anyVisible = false
+   365→
+   366→    for (let i = 0; i < MODULE_COUNT; i++) {
+   367→      const entryDelay = 1.5 + i * 0.18
+   368→      const entryProgress = easeOutCubic((t - entryDelay) / 0.9)
+   369→      const currentRadius = ORBIT_RADIUS * entryProgress
+   370→      const pos = getModulePos(i, t, currentRadius)
+   371→
+   372→      const idx = i * 6
+   373→      BEAM_POS[idx] = 0
+   374→      BEAM_POS[idx + 1] = 0
+   375→      BEAM_POS[idx + 2] = 0
+   376→      BEAM_POS[idx + 3] = pos.x
+   377→      BEAM_POS[idx + 4] = pos.y
+   378→      BEAM_POS[idx + 5] = pos.z
+   379→
+   380→      if (entryProgress > 0.1) anyVisible = true
+   381→
+   382→      for (let p = 0; p < 3; p++) {
+   383→        const pIdx = (i * 3 + p) * 3
+   384→        const progress = ((t * 0.8 + p * 0.33 + i * 0.17) % 1)
+   385→        PARTICLE_POS[pIdx] = pos.x * progress
+   386→        PARTICLE_POS[pIdx + 1] = pos.y * progress
+   387→        PARTICLE_POS[pIdx + 2] = pos.z * progress
+   388→      }
+   389→    }
+   390→
+   391→    if (BEAM_ATTR) BEAM_ATTR.needsUpdate = true
+   392→    if (PARTICLE_ATTR) PARTICLE_ATTR.needsUpdate = true
+   393→
+   394→    LINE_MAT.opacity = anyVisible ? 0.06 + Math.sin(t * 1.5) * 0.02 : 0
+   395→    POINT_MAT.opacity = anyVisible ? 0.6 : 0
+   396→  })
+   397→
+   398→  return (
+   399→    <group>
+   400→      <primitive object={lineObj} />
+   401→      <primitive object={pointsObj} />
+   402→    </group>
+   403→  )
+   404→}
+   405→
+   406→/* ═══════════════════════════════════════════
+   407→   AMBIENT PARTICLES
+   408→   Instanced mesh for performance
+   409→   ═══════════════════════════════════════════ */
+   410→
+   411→function AmbientParticles() {
+   412→  const meshRef = useRef<THREE.InstancedMesh>(null)
+   413→  const dummy = useMemo(() => new THREE.Object3D(), [])
+   414→
+   415→  const count = typeof window !== 'undefined' && window.innerWidth < 768 ? 80 : 160
+   416→
+   417→  const particles = useMemo(() => {
+   418→    return Array.from({ length: count }, () => ({
+   419→      position: new THREE.Vector3(
+   420→        (Math.random() - 0.5) * 18,
+   421→        (Math.random() - 0.5) * 14,
+   422→        (Math.random() - 0.5) * 18
+   423→      ),
+   424→      speed: Math.random() * 0.25 + 0.05,
+   425→      offset: Math.random() * Math.PI * 2,
+   426→      size: Math.random() * 0.6 + 0.4,
+   427→    }))
+   428→  }, [count])
+   429→
+   430→  useFrame(({ clock }) => {
+   431→    if (!meshRef.current || !sceneVisible.current) return
+   432→    const t = clock.getElapsedTime()
+   433→
+   434→    for (let i = 0; i < particles.length; i++) {
+   435→      const p = particles[i]
+   436→      dummy.position.set(
+   437→        p.position.x + Math.sin(t * p.speed + p.offset) * 0.5,
+   438→        p.position.y + Math.cos(t * p.speed * 0.6 + p.offset) * 0.35,
+   439→        p.position.z + Math.sin(t * p.speed * 0.4 + p.offset * 2) * 0.4
+   440→      )
+   441→      const s = p.size * (0.6 + Math.sin(t * 0.7 + p.offset) * 0.4)
+   442→      dummy.scale.setScalar(s)
+   443→      dummy.updateMatrix()
+   444→      meshRef.current.setMatrixAt(i, dummy.matrix)
+   445→    }
+   446→    meshRef.current.instanceMatrix.needsUpdate = true
+   447→  })
+   448→
+   449→  return (
+   450→    <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
+   451→      <sphereGeometry args={[0.02, 6, 6]} />
+   452→      <meshBasicMaterial color="#10b981" transparent opacity={0.35} />
+   453→    </instancedMesh>
+   454→  )
+   455→}
+   456→
+   457→/* ═══════════════════════════════════════════
+   458→   ETHIOPIAN PLATFORM
+   459→   Hexagonal platform with geometric patterns
+   460→   ═══════════════════════════════════════════ */
+   461→
+   462→function EthiopianPlatform() {
+   463→  const groupRef = useRef<THREE.Group>(null)
+   464→  const platformMat = useRef<THREE.MeshBasicMaterial>(null)
+   465→
+   466→  useFrame(({ clock }) => {
+   467→    const t = clock.getElapsedTime()
+   468→    if (!groupRef.current || !sceneVisible.current) return
+   469→    const entry = easeOutCubic((t - 0.8) / 1.5)
+   470→    groupRef.current.scale.setScalar(entry)
+   471→    groupRef.current.rotation.y = t * 0.025
+   472→    if (platformMat.current) {
+   473→      platformMat.current.opacity = 0.035 * entry
+   474→    }
+   475→  })
+   476→
+   477→  const hexShape = useMemo(() => {
+   478→    const shape = new THREE.Shape()
+   479→    const r = 3.8
+   480→    for (let i = 0; i < 6; i++) {
+   481→      const angle = (i * Math.PI * 2) / 6 - Math.PI / 6
+   482→      const x = Math.cos(angle) * r
+   483→      const y = Math.sin(angle) * r
+   484→      if (i === 0) shape.moveTo(x, y)
+   485→      else shape.lineTo(x, y)
+   486→    }
+   487→    shape.closePath()
+   488→    return shape
+   489→  }, [])
+   490→
+   491→  return (
+   492→    <group ref={groupRef} position={[0, -2.4, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+   493→      <mesh>
+   494→        <shapeGeometry args={[hexShape]} />
+   495→        <meshBasicMaterial ref={platformMat} color="#10b981" transparent opacity={0} side={THREE.DoubleSide} />
+   496→      </mesh>
+   497→      {/* Ethiopian-inspired hexagonal rings */}
+   498→      <mesh rotation={[Math.PI / 2, 0, 0]}>
+   499→        <ringGeometry args={[2.8, 2.85, 6]} />
+   500→        <meshBasicMaterial color="#f59e0b" transparent opacity={0.05} side={THREE.DoubleSide} />
+   501→      </mesh>
+   502→      <mesh rotation={[Math.PI / 2, 0, 0]}>
+   503→        <ringGeometry args={[2.0, 2.04, 6]} />
+   504→        <meshBasicMaterial color="#f59e0b" transparent opacity={0.035} side={THREE.DoubleSide} />
+   505→      </mesh>
+   506→      {/* Inner cross pattern (Axumite-inspired) */}
+   507→      <mesh rotation={[Math.PI / 2, 0, 0]}>
+   508→        <ringGeometry args={[1.2, 1.23, 4]} />
+   509→        <meshBasicMaterial color="#10b981" transparent opacity={0.04} side={THREE.DoubleSide} />
+   510→      </mesh>
+   511→    </group>
+   512→  )
+   513→}
+   514→
+   515→/* ═══════════════════════════════════════════
+   516→   NETWORK NODES (Stage 3 — scroll expansion)
+   517→   Additional nodes that appear as camera zooms out
+   518→   ═══════════════════════════════════════════ */
+   519→
+   520→function NetworkNodes() {
+   521→  const meshRef = useRef<THREE.InstancedMesh>(null)
+   522→  const lineRef = useRef<THREE.LineSegments>(null)
+   523→  const matRef = useRef<THREE.PointsMaterial>(null)
+   524→  const lineMatRef = useRef<THREE.LineBasicMaterial>(null)
+   525→  const dummy = useMemo(() => new THREE.Object3D(), [])
+   526→
+   527→  const extraNodes = useMemo(() => {
+   528→    const nodes: THREE.Vector3[] = []
+   529→    for (let i = 0; i < 20; i++) {
+   530→      const theta = Math.random() * Math.PI * 2
+   531→      const phi = Math.random() * Math.PI
+   532→      const r = 4.5 + Math.random() * 3
+   533→      nodes.push(new THREE.Vector3(
+   534→        r * Math.sin(phi) * Math.cos(theta),
+   535→        (Math.random() - 0.5) * 4,
+   536→        r * Math.sin(phi) * Math.sin(theta)
+   537→      ))
+   538→    }
+   539→    return nodes
+   540→  }, [])
+   541→
+   542→  // Connection lines between nearby extra nodes
+   543→  const lineGeometry = useMemo(() => {
+   544→    const geo = new THREE.BufferGeometry()
+   545→    const positions: number[] = []
+   546→    for (let i = 0; i < extraNodes.length; i++) {
+   547→      for (let j = i + 1; j < extraNodes.length; j++) {
+   548→        if (extraNodes[i].distanceTo(extraNodes[j]) < 4.5) {
+   549→          positions.push(
+   550→            extraNodes[i].x, extraNodes[i].y, extraNodes[i].z,
+   551→            extraNodes[j].x, extraNodes[j].y, extraNodes[j].z
+   552→          )
+   553→        }
+   554→      }
+   555→    }
+   556→    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+   557→    return geo
+   558→  }, [extraNodes])
+   559→
+   560→  useFrame(({ clock }) => {
+   561→    if (!sceneVisible.current) return
+   562→    const t = clock.getElapsedTime()
+   563→
+   564→    // Network nodes appear at scroll progress > 0.3
+   565→    const scrollY = window.scrollY
+   566→    const vh = window.innerHeight
+   567→    const scrollProgress = Math.min(1, scrollY / (vh * 2.5))
+   568→    const networkAlpha = Math.max(0, (scrollProgress - 0.2) / 0.5)
+   569→
+   570→    if (meshRef.current) {
+   571→      for (let i = 0; i < extraNodes.length; i++) {
+   572→        const p = extraNodes[i]
+   573→        dummy.position.set(
+   574→          p.x + Math.sin(t * 0.2 + i) * 0.1,
+   575→          p.y + Math.cos(t * 0.15 + i * 0.7) * 0.08,
+   576→          p.z + Math.sin(t * 0.18 + i * 1.3) * 0.1
+   577→        )
+   578→        const s = networkAlpha * (0.5 + Math.sin(t * 0.5 + i) * 0.3)
+   579→        dummy.scale.setScalar(Math.max(0.01, s))
+   580→        dummy.updateMatrix()
+   581→        meshRef.current.setMatrixAt(i, dummy.matrix)
+   582→      }
+   583→      meshRef.current.instanceMatrix.needsUpdate = true
+   584→    }
+   585→
+   586→    if (matRef.current) {
+   587→      matRef.current.opacity = networkAlpha * 0.5
+   588→    }
+   589→    if (lineMatRef.current) {
+   590→      lineMatRef.current.opacity = networkAlpha * 0.06
+   591→    }
+   592→  })
+   593→
+   594→  return (
+   595→    <group>
+   596→      <instancedMesh ref={meshRef} args={[undefined, undefined, extraNodes.length]}>
+   597→        <sphereGeometry args={[0.04, 8, 8]} />
+   598→        <pointsMaterial ref={matRef} color="#06b6d4" size={0.08} transparent opacity={0} sizeAttenuation />
+   599→      </instancedMesh>
+   600→      <lineSegments geometry={lineGeometry}>
+   601→        <lineBasicMaterial
+   602→          ref={lineMatRef}
+   603→          color="#06b6d4"
+   604→          transparent
+   605→          opacity={0}
+   606→          blending={THREE.AdditiveBlending}
+   607→        />
+   608→      </lineSegments>
+   609→    </group>
+   610→  )
+   611→}
+   612→
+   613→/* ═══════════════════════════════════════════
+   614→   DAYN FLOW NODE (Stage 4 — product reveal)
+   615→   ═══════════════════════════════════════════ */
+   616→
+   617→function DaynFlowNode() {
+   618→  const groupRef = useRef<THREE.Group>(null)
+   619→  const meshRef = useRef<THREE.Mesh>(null)
+   620→  const glowRef = useRef<THREE.Mesh>(null)
+   621→  const htmlRef = useRef<HTMLDivElement>(null)
+   622→  const [showLabel, setShowLabel] = useState(false)
+   623→
+   624→  useFrame(({ clock }) => {
+   625→    if (!sceneVisible.current) return
+   626→    const t = clock.getElapsedTime()
+   627→
+   628→    const scrollY = window.scrollY
+   629→    const vh = window.innerHeight
+   630→    const scrollProgress = Math.min(1, scrollY / (vh * 2.5))
+   631→    const revealAlpha = Math.max(0, (scrollProgress - 0.5) / 0.4)
+   632→
+   633→    if (groupRef.current) {
+   634→      const angle = t * 0.08
+   635→      groupRef.current.position.set(
+   636→        Math.cos(angle) * 5.5,
+   637→        1.2 + Math.sin(t * 0.3) * 0.2,
+   638→        Math.sin(angle) * 5.5
+   639→      )
+   640→      groupRef.current.scale.setScalar(Math.max(0.01, revealAlpha))
+   641→    }
+   642→    if (meshRef.current) {
+   643→      meshRef.current.rotation.y = t * 0.5
+   644→      meshRef.current.rotation.x = t * 0.3
+   645→    }
+   646→    if (glowRef.current) {
+   647→      const pulse = Math.sin(t * 2) * 0.1 + 1
+   648→      glowRef.current.scale.setScalar(Math.max(0.01, revealAlpha * pulse * 1.5))
+   649→      ;(glowRef.current.material as THREE.MeshBasicMaterial).opacity = revealAlpha * 0.08
+   650→    }
+   651→
+   652→    setShowLabel(revealAlpha > 0.5)
+   653→  })
+   654→
+   655→  return (
+   656→    <group ref={groupRef}>
+   657→      <mesh ref={meshRef}>
+   658→        <icosahedronGeometry args={[0.25, 0]} />
+   659→        <meshStandardMaterial
+   660→          emissive="#f59e0b"
+   661→          emissiveIntensity={3}
+   662→          color="#f59e0b"
+   663→          toneMapped={false}
+   664→        />
+   665→      </mesh>
+   666→      <mesh ref={glowRef}>
+   667→        <sphereGeometry args={[0.45, 16, 16]} />
+   668→        <meshBasicMaterial
+   669→          color="#f59e0b"
+   670→          transparent
+   671→          opacity={0}
+   672→          blending={THREE.AdditiveBlending}
+   673→          side={THREE.BackSide}
+   674→        />
+   675→      </mesh>
+   676→      {showLabel && (
+   677→        <Html center distanceFactor={10} style={{ pointerEvents: 'none' }}>
+   678→          <div
+   679→            className="px-3 py-1.5 rounded-full text-center whitespace-nowrap"
+   680→            style={{
+   681→              background: 'rgba(5,5,7,0.9)',
+   682→              border: '1px solid rgba(245,158,11,0.4)',
+   683→              boxShadow: '0 0 20px rgba(245,158,11,0.15)',
+   684→            }}
+   685→          >
+   686→            <span className="text-xs font-bold text-amber-400 tracking-wider">DAYN FLOW</span>
+   687→          </div>
+   688→        </Html>
+   689→      )}
+   690→    </group>
+   691→  )
+   692→}
+   693→
+   694→/* ═══════════════════════════════════════════
+   695→   SCENE LIGHTING
+   696→   ═══════════════════════════════════════════ */
+   697→
+   698→function SceneLighting() {
+   699→  return (
+   700→    <>
+   701→      <ambientLight intensity={0.08} />
+   702→      <pointLight position={[0, 0, 0]} intensity={1.5} color="#10b981" distance={12} decay={2} />
+   703→      <pointLight position={[4, 3, 4]} intensity={0.25} color="#06b6d4" distance={18} />
+   704→      <pointLight position={[-4, -2, -4]} intensity={0.12} color="#f59e0b" distance={18} />
+   705→    </>
+   706→  )
+   707→}
+   708→
+   709→/* ═══════════════════════════════════════════
+   710→   CAMERA CONTROLLER
+   711→   Mouse parallax + scroll-driven zoom
+   712→   ═══════════════════════════════════════════ */
+   713→
+   714→function CameraController() {
+   715→  const { camera } = useThree()
+   716→  const mouse = useRef({ x: 0, y: 0 })
+   717→  const target = useRef(new THREE.Vector3(0, 0, 7.5))
+   718→
+   719→  useEffect(() => {
+   720→    const onMove = (e: MouseEvent) => {
+   721→      mouse.current.x = (e.clientX / window.innerWidth - 0.5) * 2
+   722→      mouse.current.y = (e.clientY / window.innerHeight - 0.5) * 2
+   723→    }
+   724→    window.addEventListener('mousemove', onMove, { passive: true })
+   725→    return () => window.removeEventListener('mousemove', onMove)
+   726→  }, [])
+   727→
+   728→  useFrame(() => {
+   729→    if (!sceneVisible.current) return
+   730→
+   731→    const scrollY = window.scrollY
+   732→    const vh = window.innerHeight
+   733→    const sp = Math.min(1, scrollY / (vh * 2.5))
+   734→
+   735→    // Camera zooms out on scroll
+   736→    const z = THREE.MathUtils.lerp(7.5, 13, sp)
+   737→    // Mouse parallax reduces with scroll
+   738→    const parallaxStrength = 1 - sp * 0.6
+   739→    const x = mouse.current.x * 0.7 * parallaxStrength
+   740→    const y = -mouse.current.y * 0.4 * parallaxStrength
+   741→
+   742→    target.current.set(x, y, z)
+   743→    camera.position.lerp(target.current, 0.04)
+   744→    camera.lookAt(0, 0, 0)
+   745→  })
+   746→
+   747→  return null
+   748→}
+   749→
+   750→/* ═══════════════════════════════════════════
+   751→   MAIN EXPORT
+   752→   ═══════════════════════════════════════════ */
+   753→
+   754→export function FutureCoreScene() {
+   755→  const wrapperRef = useRef<HTMLDivElement>(null)
+   756→
+   757→  useEffect(() => {
+   758→    const onScroll = () => {
+   759→      if (!wrapperRef.current) return
+   760→      const vh = window.innerHeight
+   761→      const opacity = Math.max(0, 1 - window.scrollY / (vh * 2.8))
+   762→      wrapperRef.current.style.opacity = String(opacity)
+   763→      sceneVisible.current = opacity > 0.01
+   764→    }
+   765→    window.addEventListener('scroll', onScroll, { passive: true })
+   766→    onScroll()
+   767→    return () => window.removeEventListener('scroll', onScroll)
+   768→  }, [])
+   769→
+   770→  return (
+   771→    <div ref={wrapperRef} className="fixed inset-0 z-[2] pointer-events-none">
+   772→      <Canvas
+   773→        camera={{ position: [0, 0, 7.5], fov: 45 }}
+   774→        dpr={[1, 1.5]}
+   775→        gl={{
+   776→          antialias: true,
+   777→          alpha: true,
+   778→          powerPreference: 'high-performance',
+   779→        }}
+   780→        style={{ background: 'transparent' }}
+   781→      >
+   782→        <SceneLighting />
+   783→        <CameraController />
+   784→        <EnergyCore />
+   785→        <CrystallineShell />
+   786→        <HolographicRings />
+   787→        {TECH_MODULES.map((_, i) => (
+   788→          <OrbitingModule key={i} index={i} />
+   789→        ))}
+   790→        <EnergyBeams />
+   791→        <AmbientParticles />
+   792→        <EthiopianPlatform />
+   793→        <NetworkNodes />
+   794→        <DaynFlowNode />
+   795→        <Stars
+   796→          radius={50}
+   797→          depth={60}
+   798→          count={600}
+   799→          factor={3}
+   800→          saturation={0}
+   801→          fade
+   802→          speed={0.4}
+   803→        />
+   804→      </Canvas>
+   805→      {/* Vignette overlay */}
+   806→      <div
+   807→        className="absolute inset-0 pointer-events-none"
+   808→        style={{
+   809→          background:
+   810→            'radial-gradient(ellipse at center, transparent 35%, rgba(5,5,7,0.5) 100%)',
+   811→        }}
+   812→      />
+   813→    </div>
+   814→  )
+   815→}
+   816→
