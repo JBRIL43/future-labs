@@ -1,17 +1,16 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { HeroParticleImage } from '@/components/HeroParticleImage'
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.15, delayChildren: 0.3 },
+    transition: { staggerChildren: 0.15, delayChildren: 0.8 },
   },
 }
 
@@ -27,89 +26,31 @@ const itemVariants = {
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
-  const blobRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] })
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
-  const contentY = useTransform(scrollYProgress, [0, 0.7], [0, -60])
-
-  // Direct mouse tracking — no React state, no lag
-  useEffect(() => {
-    const blob = blobRef.current
-    if (!blob) return
-
-    const handleMouse = (e: MouseEvent) => {
-      const nx = (e.clientX / window.innerWidth - 0.5) * 2
-      const ny = (e.clientY / window.innerHeight - 0.5) * 2
-      // Direct DOM write — zero React re-renders, zero lag
-      blob.style.transform = `translate(${nx * 15}px, ${ny * 15}px)`
-    }
-    window.addEventListener('mousemove', handleMouse, { passive: true })
-    return () => window.removeEventListener('mousemove', handleMouse)
-  }, [])
+  const contentY = useTransform(scrollYProgress, [0, 0.7], [0, -50])
 
   return (
     <section
       id="home"
       ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pointer-events-none"
     >
-      {/* Particle Image Background — reacts to cursor */}
-      <div className="absolute inset-0 z-0" style={{
-        maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
-        WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
-      }}>
-        <HeroParticleImage />
-      </div>
-
-      {/* Multi-layer gradient overlay */}
-      <div className="absolute inset-0 z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/50 to-background" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-transparent to-background/60" />
-        {/* 3D vignette */}
-        <div className="absolute inset-0" style={{
-          background: 'radial-gradient(ellipse at center, transparent 30%, rgba(5,5,7,0.8) 100%)',
-        }} />
-      </div>
-
-      {/* Morphing blob behind content */}
-      <div
-        ref={blobRef}
-        className="absolute z-[9] w-[500px] h-[500px] md:w-[700px] md:h-[700px]"
-        style={{
-          left: '50%',
-          top: '50%',
-          marginLeft: '-250px',
-          marginTop: '-250px',
-          transition: 'transform 0.15s ease-out',
-          willChange: 'transform',
-        }}
-      >
-        <motion.div
-          className="w-full h-full"
-          animate={{
-            borderRadius: ['40% 60% 60% 40% / 60% 30% 70% 40%', '60% 40% 30% 70% / 50% 60% 30% 60%', '40% 60% 60% 40% / 60% 30% 70% 40%'],
-            rotate: [0, 90, 180, 270, 360],
-            scale: [1, 1.1, 1, 1.05, 1],
-          }}
-          transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-        >
-          <div className="w-full h-full" style={{
-            background: 'radial-gradient(circle, rgba(16,185,129,0.06) 0%, rgba(16,185,129,0.02) 40%, transparent 70%)',
-            borderRadius: 'inherit',
-            filter: 'blur(60px)',
-          }} />
-        </motion.div>
+      {/* Subtle gradient for text readability over 3D scene */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background/90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
       </div>
 
       {/* Content with parallax */}
       <motion.div
-        className="relative z-20 flex flex-col items-center text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto"
+        className="relative z-20 flex flex-col items-center text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto pointer-events-auto"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
         style={{ opacity: contentOpacity, y: contentY }}
       >
-        {/* Badge with 3D depth */}
+        {/* Badge */}
         <motion.div variants={itemVariants} className="mb-8">
           <Badge
             variant="outline"
@@ -123,12 +64,12 @@ export function Hero() {
           </Badge>
         </motion.div>
 
-        {/* Main headline with 3D text shadow */}
+        {/* Main headline */}
         <motion.h1
           variants={itemVariants}
           className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight text-foreground leading-[1.05]"
           style={{
-            textShadow: '0 0 40px rgba(16,185,129,0.08), 0 4px 30px rgba(0,0,0,0.5)',
+            textShadow: '0 0 60px rgba(16,185,129,0.06), 0 4px 30px rgba(0,0,0,0.6)',
           }}
         >
           Building the{' '}
@@ -145,7 +86,7 @@ export function Hero() {
           accelerate Ethiopia&rsquo;s digital transformation.
         </motion.p>
 
-        {/* CTA Buttons with 3D effect */}
+        {/* CTA Buttons */}
         <motion.div
           variants={itemVariants}
           className="mt-12 flex flex-col sm:flex-row items-center gap-4"
@@ -175,12 +116,12 @@ export function Hero() {
         </motion.div>
       </motion.div>
 
-      {/* 3D Scroll indicator with orbiting ring */}
+      {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 1 }}
+        transition={{ delay: 2.5, duration: 1 }}
       >
         <motion.button
           onClick={() =>
@@ -203,7 +144,7 @@ export function Hero() {
         </motion.div>
       </motion.div>
 
-      {/* Bottom 3D edge line */}
+      {/* Bottom edge line */}
       <div className="absolute bottom-0 left-0 right-0 z-20 h-px" style={{
         background: 'linear-gradient(90deg, transparent, rgba(16,185,129,0.3), rgba(16,185,129,0.5), rgba(16,185,129,0.3), transparent)',
         boxShadow: '0 0 20px rgba(16,185,129,0.1)',

@@ -26,12 +26,12 @@ export function CustomCursor() {
     const onEnter = () => setVisible(true)
     const onLeave = () => setVisible(false)
 
-    // Ring: smooth follow at 60fps via rAF (no React re-renders)
+    // Ring: near-instant follow at 60fps via rAF
     const tick = () => {
       const rp = ringPos.current
       const mp = mousePos.current
-      rp.x += (mp.x - rp.x) * 0.55
-      rp.y += (mp.y - rp.y) * 0.55
+      rp.x += (mp.x - rp.x) * 0.85
+      rp.y += (mp.y - rp.y) * 0.85
       if (ringRef.current) {
         ringRef.current.style.transform = `translate(${rp.x}px,${rp.y}px)`
       }
