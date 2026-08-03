@@ -1,103 +1,95 @@
 'use client'
 
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Html, Stars } from '@react-three/drei'
-import { useRef, useMemo, useEffect, useState } from 'react'
+import { Stars } from '@react-three/drei'
+import { useRef, useMemo, useEffect } from 'react'
 import * as THREE from 'three'
 
 /* ═══════════════════════════════════════════
-   BRAND COLORS (from Future Labs logo)
+   BRAND COLORS
    ═══════════════════════════════════════════ */
 const BRAND = {
-  teal: '#0d9488',        // Primary teal from logo
-  tealLight: '#14b8a6',   // Lighter teal
-  tealBright: '#2dd4bf',  // Bright teal for corona
-  tealGlow: '#5eead4',    // Softest teal
-  gold: '#d4af37',        // Gold dot accent from logo
-  daynFlow: '#c4a35a',    // Earthy gold from Dayn Flow logo
+  teal: '#0d9488',
+  tealLight: '#14b8a6',
+  tealBright: '#2dd4bf',
+  tealGlow: '#5eead4',
+  gold: '#d4af37',
+  daynFlow: '#c4a35a',
 }
+
+// Accent square colors from reference design
+const ACCENT_COLORS = [
+  '#9b59b6', // purple
+  '#5dade2', // blue
+  '#f1c40f', // gold/yellow
+  '#85c1e9', // light blue
+  '#2ecc71', // green
+  '#e74c3c', // red/coral
+]
 
 export const sceneVisible = { current: true }
 
 /* ═══════════════════════════════════════════
-   ORBIT CONFIG — product planets
+   PRODUCT PLANETS
    ═══════════════════════════════════════════ */
 
 interface ProductPlanet {
   name: string
-  label: string
-  sublabel: string
-  radius: number          // planet visual radius
-  orbitRadius: number      // distance from sun
-  speed: number            // orbit angular speed
+  radius: number
+  orbitRadius: number
+  speed: number
   color: string
-  emissiveColor: string
-  morphColor: string       // color when morphed
-  tilt: number             // orbit plane tilt
+  morphColor: string
+  morphType: 'capsule' | 'sphere' | 'octahedron'
+  morphDelay: number
+  morphDuration: number
   hasRing: boolean
-  ringColor: string
-  // Morph: sphere → product shape
-  morphType: 'capsule' | 'sphere' | 'cube' | 'octahedron'
-  morphDelay: number       // seconds before morph starts
-  morphDuration: number    // seconds to complete morph
 }
 
 const PRODUCT_PLANETS: ProductPlanet[] = [
   {
     name: 'dayn-flow',
-    label: 'DAYN FLOW',
-    sublabel: 'Product Platform',
-    radius: 0.38,
-    orbitRadius: 4.0,
-    speed: 0.12,
+    radius: 0.32,
+    orbitRadius: 3.8,
+    speed: 0.1,
     color: BRAND.daynFlow,
-    emissiveColor: BRAND.daynFlow,
     morphColor: '#e0c068',
-    tilt: 0.08,
-    hasRing: true,
-    ringColor: BRAND.daynFlow,
     morphType: 'capsule',
     morphDelay: 2.5,
     morphDuration: 3.0,
+    hasRing: true,
   },
   {
     name: 'ai-engine',
-    label: 'AI ENGINE',
-    sublabel: 'Coming Soon',
-    radius: 0.22,
-    orbitRadius: 5.8,
-    speed: -0.08,
+    radius: 0.18,
+    orbitRadius: 5.4,
+    speed: -0.065,
     color: '#06b6d4',
-    emissiveColor: '#06b6d4',
     morphColor: '#22d3ee',
-    tilt: -0.12,
-    hasRing: false,
-    ringColor: '#06b6d4',
     morphType: 'octahedron',
     morphDelay: 4.0,
     morphDuration: 3.5,
+    hasRing: false,
   },
   {
     name: 'cloud-platform',
-    label: 'CLOUD',
-    sublabel: 'Coming Soon',
-    radius: 0.18,
-    orbitRadius: 7.0,
-    speed: 0.06,
+    radius: 0.15,
+    orbitRadius: 6.8,
+    speed: 0.045,
     color: '#a855f7',
-    emissiveColor: '#a855f7',
     morphColor: '#c084fc',
-    tilt: 0.15,
-    hasRing: false,
-    ringColor: '#a855f7',
     morphType: 'sphere',
     morphDelay: 5.5,
     morphDuration: 4.0,
+    hasRing: false,
   },
 ]
 
+// Main orbit tilt: ~20 degrees from horizontal
+const ORBIT_TILT = -0.35
+
 /* ═══════════════════════════════════════════
-   SUN (FUTURE LABS)
+   SUN (FUTURE LABS CORE)
    ═══════════════════════════════════════════ */
 
 function Sun() {
@@ -108,55 +100,56 @@ function Sun() {
     useRef<THREE.Mesh>(null),
   ]
   const lightRef = useRef<THREE.PointLight>(null)
-  const goldLightRef = useRef<THREE.PointLight>(null)
+  const goldDotRef = useRef<THREE.Mesh>(null)
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime()
     if (!sceneVisible.current) return
 
-    const pulse = Math.sin(t * 1.5) * 0.06 + 1
-
-    if (coreRef.current) {
-      coreRef.current.scale.setScalar(pulse)
-    }
+    const pulse = Math.sin(t * 1.5) * 0.05 + 1
+    if (coreRef.current) coreRef.current.scale.setScalar(pulse)
 
     const coronaPulses = [
-      Math.sin(t * 1.2 + 0.5) * 0.05 + 1,
-      Math.sin(t * 0.9 + 1.2) * 0.04 + 1,
-      Math.sin(t * 0.6 + 2.0) * 0.06 + 1,
+      Math.sin(t * 1.2 + 0.5) * 0.04 + 1,
+      Math.sin(t * 0.9 + 1.2) * 0.03 + 1,
+      Math.sin(t * 0.6 + 2.0) * 0.05 + 1,
     ]
     coronaRefs.forEach((ref, i) => {
-      if (!ref.current) return
-      ref.current.scale.setScalar(coronaPulses[i])
+      if (ref.current) ref.current.scale.setScalar(coronaPulses[i])
     })
 
-    if (lightRef.current) {
-      lightRef.current.intensity = 4 + Math.sin(t * 1.5) * 0.8
-    }
-    if (goldLightRef.current) {
-      goldLightRef.current.intensity = 1.5 + Math.sin(t * 1.0) * 0.3
+    if (lightRef.current) lightRef.current.intensity = 4 + Math.sin(t * 1.5) * 0.6
+
+    // Gold dot orbits slowly around core
+    if (goldDotRef.current) {
+      const a = t * 0.5
+      goldDotRef.current.position.set(
+        Math.cos(a) * 0.9,
+        Math.sin(a) * 0.9,
+        Math.sin(a * 0.7) * 0.2
+      )
     }
   })
 
   return (
     <group>
       <pointLight ref={lightRef} color={BRAND.teal} distance={15} decay={2} intensity={4} />
-      <pointLight ref={goldLightRef} color={BRAND.gold} distance={12} decay={2} intensity={1.5} />
+      <pointLight position={[0, 0, 0]} color={BRAND.gold} distance={10} decay={2} intensity={1.2} />
 
-      {/* Core sun body — brand teal */}
+      {/* Core */}
       <mesh ref={coreRef}>
-        <sphereGeometry args={[1.0, 64, 64]} />
+        <sphereGeometry args={[0.85, 64, 64]} />
         <meshStandardMaterial
           emissive={BRAND.teal}
-          emissiveIntensity={4}
+          emissiveIntensity={4.5}
           color={BRAND.tealLight}
           toneMapped={false}
         />
       </mesh>
 
-      {/* Gold accent dot (like the logo dot) */}
-      <mesh position={[0.85, -0.65, 0.3]}>
-        <sphereGeometry args={[0.08, 16, 16]} />
+      {/* Orbiting gold accent dot */}
+      <mesh ref={goldDotRef}>
+        <sphereGeometry args={[0.06, 12, 12]} />
         <meshStandardMaterial
           emissive={BRAND.gold}
           emissiveIntensity={6}
@@ -165,11 +158,11 @@ function Sun() {
         />
       </mesh>
 
-      {/* Corona glow layers */}
+      {/* Corona glow */}
       {[
-        { size: 1.4, opacity: 0.15, color: BRAND.teal },
-        { size: 1.9, opacity: 0.07, color: BRAND.tealLight },
-        { size: 2.6, opacity: 0.03, color: BRAND.tealGlow },
+        { size: 1.2, opacity: 0.18, color: BRAND.teal },
+        { size: 1.7, opacity: 0.08, color: BRAND.tealLight },
+        { size: 2.4, opacity: 0.03, color: BRAND.tealGlow },
       ].map((g, i) => (
         <mesh key={i} ref={coronaRefs[i]}>
           <sphereGeometry args={[g.size, 32, 32]} />
@@ -187,23 +180,323 @@ function Sun() {
 }
 
 /* ═══════════════════════════════════════════
-   SOLAR PARTICLES — round spheres orbiting sun
+   WIREFRAME GEODESIC SPHERE
+   Low-poly icosahedron cage around the core
+   ═══════════════════════════════════════════ */
+
+function GeodesicCage() {
+  const outerRef = useRef<THREE.Mesh>(null)
+  const innerRef = useRef<THREE.Mesh>(null)
+  const outerMat = useRef<THREE.MeshBasicMaterial>(null)
+  const innerMat = useRef<THREE.MeshBasicMaterial>(null)
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime()
+    if (!sceneVisible.current) return
+
+    if (outerRef.current) {
+      outerRef.current.rotation.y = t * 0.08
+      outerRef.current.rotation.x = Math.sin(t * 0.05) * 0.08
+    }
+    if (innerRef.current) {
+      innerRef.current.rotation.y = -t * 0.06
+      if (outerRef.current) innerRef.current.rotation.z = t * 0.04
+    }
+    if (outerMat.current) {
+      outerMat.current.opacity = 0.18 + Math.sin(t * 0.3) * 0.04
+    }
+    if (innerMat.current) {
+      innerMat.current.opacity = 0.09 + Math.sin(t * 0.4 + 1) * 0.03
+    }
+  })
+
+  return (
+    <group>
+      {/* Outer icosahedron wireframe */}
+      <mesh ref={outerRef}>
+        <icosahedronGeometry args={[2.8, 1]} />
+        <meshBasicMaterial ref={outerMat} color="#1f4a4a" wireframe transparent opacity={0.18} />
+      </mesh>
+      {/* Inner dodecahedron wireframe */}
+      <mesh ref={innerRef}>
+        <dodecahedronGeometry args={[2.0, 0]} />
+        <meshBasicMaterial ref={innerMat} color="#1f4a4a" wireframe transparent opacity={0.09} />
+      </mesh>
+    </group>
+  )
+}
+
+/* ═══════════════════════════════════════════
+   HORIZONTAL AXIS LINE
+   Prominent line through center
+   ═══════════════════════════════════════════ */
+
+function AxisLine() {
+  const matRef = useRef<THREE.LineBasicMaterial>(null)
+  const lineRef = useRef<THREE.Line>(null)
+
+  const geometry = useMemo(() => {
+    const geo = new THREE.BufferGeometry()
+    const positions = new Float32Array([-12, 0, 0, 12, 0, 0])
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+    return geo
+  }, [])
+
+  useFrame(() => {
+    if (!sceneVisible.current) return
+    if (matRef.current) {
+      matRef.current.opacity = 0.12 + Math.sin(Date.now() * 0.001) * 0.04
+    }
+  })
+
+  return (
+    <group rotation={[0, 0, ORBIT_TILT]}>
+      <line ref={lineRef as any} geometry={geometry}>
+        <lineBasicMaterial ref={matRef} color={BRAND.teal} transparent opacity={0.12} />
+      </line>
+    </group>
+  )
+}
+
+/* ═══════════════════════════════════════════
+   ACCENT SQUARES
+   Small colored squares floating in space
+   ═══════════════════════════════════════════ */
+
+function AccentSquares() {
+  const meshRef = useRef<THREE.InstancedMesh>(null)
+  const dummy = useMemo(() => new THREE.Object3D(), [])
+
+  const squares = useMemo(() => {
+    return ACCENT_COLORS.map((color, i) => {
+      const spread = 8
+      return {
+        position: new THREE.Vector3(
+          (Math.random() - 0.5) * spread * 2,
+          (Math.random() - 0.5) * spread * 0.5,
+          (Math.random() - 0.5) * spread * 0.8
+        ),
+        rotation: new THREE.Euler(
+          Math.random() * Math.PI,
+          Math.random() * Math.PI,
+          Math.random() * Math.PI
+        ),
+        rotSpeed: (Math.random() - 0.5) * 0.3,
+        floatSpeed: Math.random() * 0.2 + 0.05,
+        floatAmp: Math.random() * 0.15 + 0.05,
+        phase: Math.random() * Math.PI * 2,
+        size: Math.random() * 0.08 + 0.04,
+        color: new THREE.Color(color),
+        index: i,
+      }
+    })
+  }, [])
+
+  useFrame(({ clock }) => {
+    if (!meshRef.current || !sceneVisible.current) return
+    const t = clock.getElapsedTime()
+
+    for (let i = 0; i < squares.length; i++) {
+      const sq = squares[i]
+      dummy.position.set(
+        sq.position.x + Math.sin(t * sq.floatSpeed + sq.phase) * 0.3,
+        sq.position.y + Math.sin(t * sq.floatSpeed * 0.7 + sq.phase) * sq.floatAmp,
+        sq.position.z + Math.cos(t * sq.floatSpeed * 0.5 + sq.phase) * 0.2
+      )
+      dummy.rotation.set(
+        sq.rotation.x + t * sq.rotSpeed,
+        sq.rotation.y + t * sq.rotSpeed * 0.7,
+        sq.rotation.z
+      )
+      const s = sq.size * (0.8 + Math.sin(t * 0.5 + sq.phase) * 0.2)
+      dummy.scale.setScalar(Math.max(0.01, s))
+      dummy.updateMatrix()
+      meshRef.current.setMatrixAt(i, dummy.matrix)
+    }
+    meshRef.current.instanceMatrix.needsUpdate = true
+  })
+
+  return (
+    <instancedMesh ref={meshRef} args={[undefined, undefined, squares.length]}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshBasicMaterial color="white" transparent opacity={0.7} />
+    </instancedMesh>
+  )
+}
+
+/* ═══════════════════════════════════════════
+   ORBIT RING
+   ═══════════════════════════════════════════ */
+
+function OrbitRing({ radius, color, opacity = 0.08 }: {
+  radius: number; color: string; opacity?: number
+}) {
+  const matRef = useRef<THREE.MeshBasicMaterial>(null)
+  const entryRef = useRef(0)
+
+  useFrame(() => {
+    if (!sceneVisible.current) return
+    entryRef.current = Math.min(1, entryRef.current + 0.008)
+    if (matRef.current) matRef.current.opacity = opacity * entryRef.current
+  })
+
+  return (
+    <mesh rotation={[Math.PI / 2 + ORBIT_TILT, 0, 0]}>
+      <torusGeometry args={[radius, 0.006, 8, 128]} />
+      <meshBasicMaterial ref={matRef} color={color} transparent opacity={0} />
+    </mesh>
+  )
+}
+
+/* ═══════════════════════════════════════════
+   PRODUCT PLANET (morphing sphere → product)
+   ═══════════════════════════════════════════ */
+
+function ProductPlanet({ config }: { config: ProductPlanet }) {
+  const groupRef = useRef<THREE.Group>(null)
+  const sphereRef = useRef<THREE.Mesh>(null)
+  const morphRef = useRef<THREE.Mesh>(null)
+  const glowRef = useRef<THREE.Mesh>(null)
+  const ringRef = useRef<THREE.Mesh>(null)
+  const scaleRef = useRef(0.01)
+  const morphRef_val = useRef(0)
+
+  useFrame(({ clock }) => {
+    if (!sceneVisible.current) return
+    const t = clock.getElapsedTime()
+
+    // Entry
+    if (t > 1.5) scaleRef.current += (1 - scaleRef.current) * 0.03
+    const entry = Math.min(1, scaleRef.current)
+
+    // Morph progress
+    if (t > config.morphDelay) {
+      morphRef_val.current = Math.min(1, morphRef_val.current + 1 / (config.morphDuration * 60))
+    }
+    const m = morphRef_val.current
+    const smooth = m < 0.5 ? 4 * m * m * m : 1 - Math.pow(-2 * m + 2, 3) / 2
+
+    // Orbit on tilted plane
+    const angle = t * config.speed
+    const cosA = Math.cos(angle)
+    const sinA = Math.sin(angle)
+    const cosT = Math.cos(ORBIT_TILT)
+    const sinT = Math.sin(ORBIT_TILT)
+    const r = config.orbitRadius
+    const x = cosA * r
+    const z = sinA * r
+    const y = sinA * r * sinT * 0.3 // slight tilt displacement
+
+    if (groupRef.current) groupRef.current.position.set(x, y, z)
+
+    // Sphere fades out
+    if (sphereRef.current) {
+      sphereRef.current.rotation.y = t * 0.3
+      sphereRef.current.scale.setScalar(Math.max(0.001, entry * (1 - smooth)))
+      ;(sphereRef.current.material as THREE.MeshStandardMaterial).opacity = 1 - smooth
+    }
+
+    // Morph shape fades in
+    if (morphRef.current) {
+      morphRef.current.rotation.y = t * 0.4
+      morphRef.current.scale.setScalar(Math.max(0.001, entry * smooth))
+      ;(morphRef.current.material as THREE.MeshStandardMaterial).opacity = smooth
+    }
+
+    // Glow
+    if (glowRef.current) {
+      const gp = Math.sin(t * 2) * 0.08 + 1
+      glowRef.current.scale.setScalar(entry * gp * 2)
+      ;(glowRef.current.material as THREE.MeshBasicMaterial).opacity = 0.04
+    }
+
+    // Ring (Dayn Flow)
+    if (ringRef.current && config.hasRing) {
+      ringRef.current.rotation.x = Math.PI / 2.5
+      ringRef.current.rotation.z = Math.sin(t * 0.2) * 0.05
+      ringRef.current.scale.setScalar(entry * (0.5 + smooth * 0.5))
+      ;(ringRef.current.material as THREE.MeshBasicMaterial).opacity = 0.15 * entry
+    }
+  })
+
+  const morphGeo = () => {
+    switch (config.morphType) {
+      case 'capsule':
+        return <capsuleGeometry args={[config.radius * 0.65, config.radius * 1.2, 16, 32]} />
+      case 'octahedron':
+        return <octahedronGeometry args={[config.radius, 0]} />
+      default:
+        return <sphereGeometry args={[config.radius, 48, 48]} />
+    }
+  }
+
+  return (
+    <group ref={groupRef}>
+      <mesh ref={sphereRef}>
+        <sphereGeometry args={[config.radius, 48, 48]} />
+        <meshStandardMaterial
+          color={config.color}
+          emissive={config.color}
+          emissiveIntensity={0.5}
+          transparent opacity={1}
+          roughness={0.3}
+          metalness={0.2}
+          toneMapped={false}
+        />
+      </mesh>
+      <mesh ref={morphRef} scale={0.001}>
+        {morphGeo()}
+        <meshStandardMaterial
+          color={config.morphColor}
+          emissive={config.morphColor}
+          emissiveIntensity={1}
+          transparent opacity={0}
+          roughness={0.25}
+          metalness={0.3}
+          toneMapped={false}
+        />
+      </mesh>
+      <mesh ref={glowRef}>
+        <sphereGeometry args={[config.radius * 1.15, 24, 24]} />
+        <meshBasicMaterial
+          color={config.color}
+          transparent opacity={0.04}
+          blending={THREE.AdditiveBlending}
+          side={THREE.BackSide}
+        />
+      </mesh>
+      {config.hasRing && (
+        <mesh ref={ringRef}>
+          <torusGeometry args={[config.radius * 1.8, 0.02, 8, 64]} />
+          <meshBasicMaterial
+            color={config.color}
+            transparent opacity={0.15}
+            blending={THREE.AdditiveBlending}
+          />
+        </mesh>
+      )}
+    </group>
+  )
+}
+
+/* ═══════════════════════════════════════════
+   SOLAR PARTICLES (round spheres)
    ═══════════════════════════════════════════ */
 
 function SolarParticles() {
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-  const count = isMobile ? 50 : 100
+  const count = isMobile ? 40 : 80
 
   const particles = useMemo(() => {
     return Array.from({ length: count }, () => ({
       theta: Math.random() * Math.PI * 2,
-      phi: (Math.random() - 0.5) * Math.PI * 0.6,
-      radius: 1.3 + Math.random() * 1.5,
-      speed: (Math.random() * 0.3 + 0.1) * (Math.random() < 0.5 ? 1 : -1),
-      yOffset: (Math.random() - 0.5) * 0.4,
-      size: Math.random() * 0.5 + 0.3,
+      phi: (Math.random() - 0.5) * Math.PI * 0.5,
+      radius: 1.1 + Math.random() * 1.3,
+      speed: (Math.random() * 0.25 + 0.08) * (Math.random() < 0.5 ? 1 : -1),
+      yOffset: (Math.random() - 0.5) * 0.3,
+      size: Math.random() * 0.4 + 0.2,
       phase: Math.random() * Math.PI * 2,
     }))
   }, [count])
@@ -215,11 +508,10 @@ function SolarParticles() {
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i]
       const angle = p.theta + t * p.speed
-      const r = p.radius + Math.sin(t * 0.5 + p.phase) * 0.15
-
+      const r = p.radius + Math.sin(t * 0.5 + p.phase) * 0.12
       dummy.position.set(
         Math.cos(angle) * Math.cos(p.phi) * r,
-        p.yOffset + Math.sin(t * 0.3 + p.phase) * 0.1,
+        p.yOffset + Math.sin(t * 0.3 + p.phase) * 0.08,
         Math.sin(angle) * Math.cos(p.phi) * r
       )
       const s = p.size * (0.6 + Math.sin(t * 0.8 + p.phase) * 0.4)
@@ -232,245 +524,32 @@ function SolarParticles() {
 
   return (
     <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
-      <sphereGeometry args={[0.025, 6, 6]} />
-      <meshBasicMaterial color={BRAND.tealLight} transparent opacity={0.5} blending={THREE.AdditiveBlending} />
+      <sphereGeometry args={[0.02, 6, 6]} />
+      <meshBasicMaterial color={BRAND.tealLight} transparent opacity={0.45} blending={THREE.AdditiveBlending} />
     </instancedMesh>
   )
 }
 
 /* ═══════════════════════════════════════════
-   ORBIT RING — visible orbital path
-   ═══════════════════════════════════════════ */
-
-function OrbitRing({ radius, color, opacity = 0.08, tilt = 0 }: {
-  radius: number; color: string; opacity?: number; tilt?: number
-}) {
-  const matRef = useRef<THREE.MeshBasicMaterial>(null)
-  const entryRef = useRef(0)
-
-  useFrame(() => {
-    if (!sceneVisible.current) return
-    entryRef.current = Math.min(1, entryRef.current + 0.008)
-    if (matRef.current) {
-      matRef.current.opacity = opacity * entryRef.current
-    }
-  })
-
-  return (
-    <mesh rotation={[Math.PI / 2 + tilt, 0, 0]}>
-      <torusGeometry args={[radius, 0.008, 8, 128]} />
-      <meshBasicMaterial ref={matRef} color={color} transparent opacity={0} />
-    </mesh>
-  )
-}
-
-/* ═══════════════════════════════════════════
-   PRODUCT PLANET
-   Morphs from sphere → product shape
-   ═══════════════════════════════════════════ */
-
-function ProductPlanet({ config }: { config: ProductPlanet }) {
-  const groupRef = useRef<THREE.Group>(null)
-  const sphereRef = useRef<THREE.Mesh>(null)
-  const morphRef = useRef<THREE.Mesh>(null)
-  const glowRef = useRef<THREE.Mesh>(null)
-  const ringRef = useRef<THREE.Mesh>(null)
-  const [hovered, setHovered] = useState(false)
-  const scaleRef = useRef(0.01)
-  const morphProgressRef = useRef(0) // 0 = sphere, 1 = product shape
-  const [showLabel, setShowLabel] = useState(false)
-
-  useFrame(({ clock }) => {
-    if (!sceneVisible.current) return
-    const t = clock.getElapsedTime()
-
-    // Entry animation
-    const entryDelay = 1.5
-    if (t > entryDelay) {
-      scaleRef.current += (1 - scaleRef.current) * 0.03
-    }
-    const entry = Math.min(1, scaleRef.current)
-
-    // Morph progress: sphere → product shape
-    if (t > config.morphDelay) {
-      morphProgressRef.current = Math.min(
-        1,
-        morphProgressRef.current + (1 / (config.morphDuration * 60))
-      )
-    }
-    const morph = morphProgressRef.current
-    // Smooth easing for morph
-    const smoothMorph = morph < 0.5
-      ? 4 * morph * morph * morph
-      : 1 - Math.pow(-2 * morph + 2, 3) / 2
-
-    // Orbit position
-    const angle = t * config.speed
-    const x = Math.cos(angle) * config.orbitRadius
-    const z = Math.sin(angle) * config.orbitRadius
-    const y = Math.sin(angle * 0.5) * 0.15 + Math.sin(t * 0.3) * 0.08
-
-    if (groupRef.current) {
-      groupRef.current.position.set(x, y, z)
-    }
-
-    // Sphere: fades out as morph progresses
-    if (sphereRef.current) {
-      sphereRef.current.rotation.y = t * 0.3
-      const sphereScale = entry * (1 - smoothMorph)
-      sphereRef.current.scale.setScalar(Math.max(0.001, sphereScale))
-      ;(sphereRef.current.material as THREE.MeshStandardMaterial).opacity = 1 - smoothMorph
-    }
-
-    // Morphed product shape: fades in
-    if (morphRef.current) {
-      morphRef.current.rotation.y = t * 0.4
-      morphRef.current.rotation.x = config.tilt
-      const productScale = entry * smoothMorph
-      morphRef.current.scale.setScalar(Math.max(0.001, productScale))
-      ;(morphRef.current.material as THREE.MeshStandardMaterial).opacity = smoothMorph
-    }
-
-    // Glow
-    if (glowRef.current) {
-      const glowPulse = Math.sin(t * 2) * 0.08 + 1
-      glowRef.current.scale.setScalar(entry * glowPulse * 2)
-      ;(glowRef.current.material as THREE.MeshBasicMaterial).opacity = hovered ? 0.12 : 0.04
-    }
-
-    // Ring
-    if (ringRef.current && config.hasRing) {
-      ringRef.current.rotation.x = Math.PI / 2.5
-      ringRef.current.rotation.z = Math.sin(t * 0.2) * 0.05
-      ringRef.current.scale.setScalar(entry * (0.5 + smoothMorph * 0.5))
-      ;(ringRef.current.material as THREE.MeshBasicMaterial).opacity = (hovered ? 0.3 : 0.15) * entry
-    }
-
-    // Show label after morph completes
-    setShowLabel(smoothMorph > 0.6 && entry > 0.5)
-  })
-
-  // Render different morph target geometries based on product type
-  const renderMorphGeometry = () => {
-    switch (config.morphType) {
-      case 'capsule':
-        return <capsuleGeometry args={[config.radius * 0.7, config.radius * 1.2, 16, 32]} />
-      case 'octahedron':
-        return <octahedronGeometry args={[config.radius, 0]} />
-      case 'cube':
-        return <boxGeometry args={[config.radius * 1.4, config.radius * 1.4, config.radius * 1.4]} />
-      default:
-        return <sphereGeometry args={[config.radius, 48, 48]} />
-    }
-  }
-
-  const hoverScale = hovered ? 1.3 : 1
-
-  return (
-    <group ref={groupRef}>
-      {/* SPHERE — the starting circle form */}
-      <mesh ref={sphereRef}>
-        <sphereGeometry args={[config.radius, 48, 48]} />
-        <meshStandardMaterial
-          color={config.color}
-          emissive={config.emissiveColor}
-          emissiveIntensity={hovered ? 2 : 0.5}
-          transparent
-          opacity={1}
-          roughness={0.3}
-          metalness={0.2}
-          toneMapped={false}
-        />
-      </mesh>
-
-      {/* MORPHED PRODUCT SHAPE — the end form */}
-      <mesh
-        ref={morphRef}
-        onPointerOver={(e) => { e.stopPropagation(); setHovered(true) }}
-        onPointerOut={() => setHovered(false)}
-        scale={0.001}
-      >
-        {renderMorphGeometry()}
-        <meshStandardMaterial
-          color={config.morphColor}
-          emissive={config.morphColor}
-          emissiveIntensity={hovered ? 3 : 1}
-          transparent
-          opacity={0}
-          roughness={0.25}
-          metalness={0.3}
-          toneMapped={false}
-        />
-      </mesh>
-
-      {/* Atmosphere glow */}
-      <mesh ref={glowRef}>
-        <sphereGeometry args={[config.radius * 1.15, 24, 24]} />
-        <meshBasicMaterial
-          color={config.color}
-          transparent
-          opacity={0.04}
-          blending={THREE.AdditiveBlending}
-          side={THREE.BackSide}
-        />
-      </mesh>
-
-      {/* Saturn-like ring for Dayn Flow */}
-      {config.hasRing && (
-        <mesh ref={ringRef}>
-          <torusGeometry args={[config.radius * 1.8, 0.025, 8, 64]} />
-          <meshBasicMaterial
-            color={config.ringColor}
-            transparent
-            opacity={0.15}
-            blending={THREE.AdditiveBlending}
-          />
-        </mesh>
-      )}
-
-      {/* Product label */}
-      {showLabel && (
-        <Html center distanceFactor={10} style={{ pointerEvents: 'none' }}>
-          <div
-            className="px-4 py-2 rounded-full text-center whitespace-nowrap"
-            style={{
-              background: 'rgba(5,5,7,0.92)',
-              border: `1px solid ${config.color}50`,
-              backdropFilter: 'blur(12px)',
-              boxShadow: `0 0 30px ${config.color}25, 0 0 60px ${config.color}10`,
-            }}
-          >
-            <div className="text-xs font-bold tracking-widest" style={{ color: config.morphColor }}>
-              {config.label}
-            </div>
-            <div className="text-[10px] text-zinc-400 mt-0.5">{config.sublabel}</div>
-          </div>
-        </Html>
-      )}
-    </group>
-  )
-}
-
-/* ═══════════════════════════════════════════
    AMBIENT DUST
-   ═══════════════════════════════════════════ */
+   ═════════════════════════════════════════ */
 
 function AmbientDust() {
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-  const count = isMobile ? 30 : 60
+  const count = isMobile ? 25 : 50
 
   const particles = useMemo(() => {
     return Array.from({ length: count }, () => ({
       position: new THREE.Vector3(
-        (Math.random() - 0.5) * 25,
-        (Math.random() - 0.5) * 18,
-        (Math.random() - 0.5) * 25
+        (Math.random() - 0.5) * 22,
+        (Math.random() - 0.5) * 16,
+        (Math.random() - 0.5) * 22
       ),
-      speed: Math.random() * 0.15 + 0.03,
+      speed: Math.random() * 0.12 + 0.02,
       offset: Math.random() * Math.PI * 2,
-      size: Math.random() * 0.4 + 0.2,
+      size: Math.random() * 0.3 + 0.15,
     }))
   }, [count])
 
@@ -481,9 +560,9 @@ function AmbientDust() {
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i]
       dummy.position.set(
-        p.position.x + Math.sin(t * p.speed + p.offset) * 0.4,
-        p.position.y + Math.cos(t * p.speed * 0.5 + p.offset) * 0.25,
-        p.position.z + Math.sin(t * p.speed * 0.3 + p.offset * 2) * 0.3
+        p.position.x + Math.sin(t * p.speed + p.offset) * 0.3,
+        p.position.y + Math.cos(t * p.speed * 0.5 + p.offset) * 0.2,
+        p.position.z + Math.sin(t * p.speed * 0.3 + p.offset * 2) * 0.25
       )
       const s = p.size * (0.5 + Math.sin(t * 0.6 + p.offset) * 0.5)
       dummy.scale.setScalar(Math.max(0.01, s))
@@ -495,51 +574,15 @@ function AmbientDust() {
 
   return (
     <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
-      <sphereGeometry args={[0.018, 4, 4]} />
-      <meshBasicMaterial color={BRAND.teal} transparent opacity={0.25} />
+      <sphereGeometry args={[0.015, 4, 4]} />
+      <meshBasicMaterial color={BRAND.teal} transparent opacity={0.2} />
     </instancedMesh>
   )
 }
 
 /* ═══════════════════════════════════════════
-   SUN LABEL
-   ═══════════════════════════════════════════ */
-
-function SunLabel() {
-  const [show, setShow] = useState(false)
-
-  useFrame(({ clock }) => {
-    if (clock.getElapsedTime() > 1.5 && !show) setShow(true)
-  })
-
-  if (!show) return null
-
-  return (
-    <Html center position={[0, -1.8, 0]} distanceFactor={8} style={{ pointerEvents: 'none' }}>
-      <div className="text-center">
-        <div
-          className="text-[10px] font-bold tracking-[0.3em] uppercase"
-          style={{
-            color: `${BRAND.tealLight}b3`,
-            textShadow: `0 0 20px ${BRAND.teal}66`,
-          }}
-        >
-          Future Labs
-        </div>
-        <div
-          className="text-[8px] tracking-[0.2em] uppercase mt-0.5"
-          style={{ color: `${BRAND.gold}99` }}
-        >
-          Software Technologies
-        </div>
-      </div>
-    </Html>
-  )
-}
-
-/* ═══════════════════════════════════════════
    SCENE LIGHTING
-   ═══════════════════════════════════════════ */
+   ═════════════════════════════════════════ */
 
 function SceneLighting() {
   return <ambientLight intensity={0.06} />
@@ -552,7 +595,7 @@ function SceneLighting() {
 function CameraController() {
   const { camera } = useThree()
   const mouse = useRef({ x: 0, y: 0 })
-  const target = useRef(new THREE.Vector3(0, 0.5, 9))
+  const target = useRef(new THREE.Vector3(0, 0, 8))
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
@@ -570,11 +613,10 @@ function CameraController() {
     const vh = window.innerHeight
     const sp = Math.min(1, scrollY / (vh * 2.5))
 
-    const z = THREE.MathUtils.lerp(9, 16, sp)
-    const baseY = THREE.MathUtils.lerp(0.5, 1.5, sp)
+    const z = THREE.MathUtils.lerp(8, 14, sp)
     const parallaxStrength = 1 - sp * 0.7
-    const x = mouse.current.x * 0.6 * parallaxStrength
-    const y = baseY - mouse.current.y * 0.35 * parallaxStrength
+    const x = mouse.current.x * 0.5 * parallaxStrength
+    const y = -mouse.current.y * 0.3 * parallaxStrength
 
     target.current.set(x, y, z)
     camera.position.lerp(target.current, 0.04)
@@ -607,7 +649,7 @@ export function SolarSystemScene() {
   return (
     <div ref={wrapperRef} className="fixed inset-0 z-[2] pointer-events-none">
       <Canvas
-        camera={{ position: [0, 0.5, 9], fov: 45 }}
+        camera={{ position: [0, 0, 8], fov: 45 }}
         dpr={[1, 1.5]}
         gl={{
           antialias: true,
@@ -619,50 +661,43 @@ export function SolarSystemScene() {
         <SceneLighting />
         <CameraController />
 
-        {/* ☀️ The Sun — Future Labs */}
-        <Sun />
-        <SunLabel />
+        {/* Starfield background */}
+        <Stars radius={60} depth={70} count={400} factor={3} saturation={0} fade speed={0.2} />
 
-        {/* Solar particles around the sun */}
+        {/* Wireframe geodesic cage */}
+        <GeodesicCage />
+
+        {/* Horizontal axis line */}
+        <AxisLine />
+
+        {/* The Sun — Future Labs core */}
+        <Sun />
+
+        {/* Solar particles (round spheres) */}
         <SolarParticles />
 
-        {/* Orbit rings for each product */}
-        {PRODUCT_PLANETS.map((planet) => (
-          <OrbitRing
-            key={`orbit-${planet.name}`}
-            radius={planet.orbitRadius}
-            color={planet.color}
-            opacity={0.1}
-            tilt={planet.tilt}
-          />
+        {/* Accent squares (colored data points) */}
+        <AccentSquares />
+
+        {/* Orbit rings */}
+        {PRODUCT_PLANETS.map((p) => (
+          <OrbitRing key={`orbit-${p.name}`} radius={p.orbitRadius} color={p.color} opacity={0.08} />
         ))}
 
         {/* Product planets */}
-        {PRODUCT_PLANETS.map((planet) => (
-          <ProductPlanet key={planet.name} config={planet} />
+        {PRODUCT_PLANETS.map((p) => (
+          <ProductPlanet key={p.name} config={p} />
         ))}
 
         {/* Ambient dust */}
         <AmbientDust />
-
-        {/* Starfield */}
-        <Stars
-          radius={60}
-          depth={70}
-          count={500}
-          factor={3}
-          saturation={0}
-          fade
-          speed={0.3}
-        />
       </Canvas>
 
       {/* Vignette */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background:
-            'radial-gradient(ellipse at center, transparent 30%, rgba(5,5,7,0.5) 100%)',
+          background: 'radial-gradient(ellipse at center, transparent 30%, rgba(5,5,7,0.55) 100%)',
         }}
       />
     </div>

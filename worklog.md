@@ -230,3 +230,27 @@ Stage Summary:
 - Dayn Flow morphs from sphere to capsule/pill (matching its logo shape)
 - Sun has gold accent dot matching the Future Labs logo
 - "Software Technologies" tagline appears under sun label
+---
+Task ID: 9
+Agent: Main Agent
+Task: Match 3D scene to reference design — wireframe geodesic cage, horizontal axis, colored accent squares
+
+Work Log:
+- Analyzed reference design via VLM: central cyan circle, wireframe geodesic icosahedron cage, horizontal axis line, colored accent squares (purple/blue/gold/green/red), tilted elliptical orbit, dark void with stars
+- Rewrote SolarSystemScene.tsx with 6 new design elements:
+  * GeodesicCage: outer icosahedron (r=2.8, detail=1) + inner dodecahedron (r=2.0), both wireframe with dark teal (#1f4a4a), slowly counter-rotating, pulsing opacity
+  * AxisLine: horizontal line through center spanning ±12 units, tilted with orbit plane, subtle pulse
+  * AccentSquares: 6 instanced colored boxes (purple #9b59b6, blue #5dade2, gold #f1c40f, light blue #85c1e9, green #2ecc71, red #e74c3c) floating and rotating in space
+  * ORBIT_TILT constant (-0.35 rad ≈ 20°) applied to all orbit rings and planet trajectories
+  * Tighter camera: z=8 (was 9), y=0 (was 0.5), reduced parallax
+  * Removed Html labels (reference has no text in the 3D scene), removed SunLabel
+- Gold accent dot now orbits the sun (matching logo dot movement)
+- Increased wireframe opacity from 0.12→0.18 outer, 0.06→0.09 inner for better visibility
+- Fixed ESLint warning (no-unused-expressions)
+- Verified: VLM rates 9/10 match, all 6 reference elements confirmed visible
+
+Stage Summary:
+- Scene now matches reference design with wireframe geodesic cage, horizontal axis, colored accent squares
+- Orbit plane tilted ~20° from horizontal matching reference ellipse
+- Product planets (Dayn Flow capsule, AI Engine octahedron, Cloud sphere) orbit within the geodesic structure
+- Clean lint, zero console errors, all page sections functional
