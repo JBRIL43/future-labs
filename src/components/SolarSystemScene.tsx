@@ -1,5 +1,4 @@
 'use client'
-/* eslint-disable @typescript-eslint/no-restricted-syntax */
 
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Stars } from '@react-three/drei'
@@ -12,31 +11,24 @@ const BRAND = {
   tealBright: '#2dd4bf',
   tealGlow: '#5eead4',
   gold: '#d4af37',
-  daynFlow: '#c4a35a',
 }
 
-const ACCENT_COLORS = [
-  '#9b59b6', '#5dade2', '#f1c40f',
-  '#85c1e9', '#2ecc71', '#e74c3c',
+// Satellite colors matching the reference: purple, blue, green, red, gold, cyan
+const SATELLITE_COLORS = [
+  '#a855f7', // purple
+  '#3b82f6', // blue
+  '#10b981', // emerald/green
+  '#ef4444', // red
+  '#eab308', // gold/yellow
+  '#06b6d4', // cyan
+  '#a855f7', // purple
+  '#3b82f6', // blue
+  '#10b981', // green
+  '#ef4444', // red
 ]
 
 export const sceneVisible = { current: true }
 export const mouse3D = { x: 999, y: 0, z: 0 }
-
-interface ProductPlanet {
-  name: string; radius: number; orbitRadius: number
-  speed: number; color: string; morphColor: string
-  morphType: 'capsule' | 'sphere' | 'octahedron'
-  morphDelay: number; morphDuration: number; hasRing: boolean
-}
-
-const PRODUCT_PLANETS: ProductPlanet[] = [
-  { name: 'dayn-flow', radius: 0.32, orbitRadius: 3.8, speed: 0.1, color: BRAND.daynFlow, morphColor: '#e0c068', morphType: 'capsule', morphDelay: 2.5, morphDuration: 3.0, hasRing: true },
-  { name: 'ai-engine', radius: 0.18, orbitRadius: 5.4, speed: -0.065, color: '#06b6d4', morphColor: '#22d3ee', morphType: 'octahedron', morphDelay: 4.0, morphDuration: 3.5, hasRing: false },
-  { name: 'cloud-platform', radius: 0.15, orbitRadius: 6.8, speed: 0.045, color: '#a855f7', morphColor: '#c084fc', morphType: 'sphere', morphDelay: 5.5, morphDuration: 4.0, hasRing: false },
-]
-
-const ORBIT_TILT = -0.35
 
 /* ═══════ MOUSE TRACKER ═══════ */
 
@@ -65,352 +57,231 @@ function MouseTracker() {
   return null
 }
 
-/* ═══════ CRYSTAL SHADER ═══════ */
+/* ═══════ WIREFRAME GLOBE ═══════ */
 
-const crystalVert = `
-varying vec3 vWorldPos;
-varying vec3 vNorm;
-void main() {
-  vec4 wp = modelMatrix * vec4(position, 1.0);
-  vWorldPos = wp.xyz;
-  vNorm = normalize(normalMatrix * normal);
-  gl_Position = projectionMatrix * viewMatrix * wp;
-}
-`
-
-const crystalFrag = `
-uniform vec3 uCursor;
-uniform float uTime;
-uniform float uBaseAlpha;
-uniform vec3 uBaseColor;
-varying vec3 vWorldPos;
-varying vec3 vNorm;
-void main() {
-  float dist = distance(vWorldPos, uCursor);
-  float glow = smoothstep(3.5, 0.0, dist);
-  float prism = dot(vNorm, normalize(vec3(1.0, 0.6, 0.4))) * 0.5 + 0.5;
-  vec3 crystalTeal = vec3(0.08, 0.78, 0.65);
-  vec3 crystalBlue = vec3(0.35, 0.68, 0.95);
-  vec3 crystalGold = vec3(0.83, 0.69, 0.22);
-  vec3 prismColor = mix(crystalTeal, crystalBlue, prism);
-  prismColor = mix(prismColor, crystalGold, glow * 0.35);
-  vec3 color = mix(uBaseColor, prismColor, glow);
-  color += vec3(1.0, 0.98, 0.95) * glow * glow * 0.4;
-  float alpha = mix(uBaseAlpha, 0.85, glow) + sin(uTime * 0.4) * 0.02;
-  gl_FragColor = vec4(color, alpha);
-}
-`
-
-/* ═══════ CRYSTAL CAGE ═══════ */
-
-function CrystalCage() {
+function WireframeGlobe() {
   const outerRef = useRef<THREE.Mesh>(null)
   const innerRef = useRef<THREE.Mesh>(null)
-  const outerU = useMemo(() => ({
-    uCursor: { value: new THREE.Vector3(999, 0, 0) },
-    uTime: { value: 0 },
-    uBaseAlpha: { value: 0.18 },
-    uBaseColor: { value: new THREE.Vector3(0.12, 0.29, 0.27) },
-    uGlowColor: { value: new THREE.Vector3(0.08, 0.72, 0.65) },
-  }), [])
-  const innerU = useMemo(() => ({
-    uCursor: { value: new THREE.Vector3(999, 0, 0) },
-    uTime: { value: 0 },
-    uBaseAlpha: { value: 0.1 },
-    uBaseColor: { value: new THREE.Vector3(0.12, 0.29, 0.27) },
-    uGlowColor: { value: new THREE.Vector3(0.08, 0.72, 0.65) },
-  }), [])
 
   useFrame((s) => {
     const t = s.clock.getElapsedTime()
     if (!sceneVisible.current) return
 
-    const cursor = new THREE.Vector3(mouse3D.x, mouse3D.y, mouse3D.z)
-    outerU.uCursor.value.lerp(cursor, 0.08)
-    innerU.uCursor.value.lerp(cursor, 0.08)
-    outerU.uTime.value = t
-    innerU.uTime.value = t
-
-    const baseOuter = 0.18 + Math.sin(t * 0.3) * 0.03
-    const baseInner = 0.1 + Math.sin(t * 0.4 + 1) * 0.02
-    const cursorDist = Math.sqrt(mouse3D.x * mouse3D.x + mouse3D.y * mouse3D.y)
-    const cursorBoost = Math.max(0, 1 - cursorDist / 3.5) * 0.15
-    outerU.uBaseAlpha.value = baseOuter + cursorBoost
-    innerU.uBaseAlpha.value = baseInner + cursorBoost * 0.5
-
     if (outerRef.current) {
-      outerRef.current.rotation.y = t * 0.08
-      outerRef.current.rotation.x = Math.sin(t * 0.05) * 0.08
+      outerRef.current.rotation.y = t * 0.06
+      outerRef.current.rotation.x = Math.sin(t * 0.03) * 0.05
     }
     if (innerRef.current) {
-      innerRef.current.rotation.y = -t * 0.06
-      innerRef.current.rotation.z = t * 0.04
+      innerRef.current.rotation.y = -t * 0.04
+      innerRef.current.rotation.z = t * 0.03
     }
   })
 
   return (
     <group>
+      {/* Main geodesic wireframe globe */}
       <mesh ref={outerRef}>
-        <icosahedronGeometry args={[2.8, 1]} />
-        <shaderMaterial vertexShader={crystalVert} fragmentShader={crystalFrag} uniforms={outerU} wireframe transparent depthWrite={false} />
+        <icosahedronGeometry args={[3.0, 2]} />
+        <meshBasicMaterial
+          color={BRAND.tealBright}
+          wireframe
+          transparent
+          opacity={0.18}
+        />
       </mesh>
+      {/* Inner layer for depth */}
       <mesh ref={innerRef}>
-        <dodecahedronGeometry args={[2.0, 0]} />
-        <shaderMaterial vertexShader={crystalVert} fragmentShader={crystalFrag} uniforms={innerU} wireframe transparent depthWrite={false} />
+        <icosahedronGeometry args={[2.4, 1]} />
+        <meshBasicMaterial
+          color={BRAND.tealLight}
+          wireframe
+          transparent
+          opacity={0.08}
+        />
       </mesh>
     </group>
   )
 }
 
-/* ═══════ CURSOR LIGHT ═══════ */
+/* ═══════ GLOWING NUCLEUS ═══════ */
 
-function CursorLight() {
+function Nucleus() {
+  const coreRef = useRef<THREE.Mesh>(null)
+  const glow1Ref = useRef<THREE.Mesh>(null)
+  const glow2Ref = useRef<THREE.Mesh>(null)
   const lightRef = useRef<THREE.PointLight>(null)
-  const glowRef = useRef<THREE.Mesh>(null)
+
+  useFrame((s) => {
+    const t = s.clock.getElapsedTime()
+    if (!sceneVisible.current) return
+
+    const pulse = Math.sin(t * 1.2) * 0.08 + 1
+    if (coreRef.current) coreRef.current.scale.setScalar(pulse)
+
+    const gp1 = Math.sin(t * 0.8 + 0.5) * 0.06 + 1
+    if (glow1Ref.current) glow1Ref.current.scale.setScalar(gp1)
+
+    const gp2 = Math.sin(t * 0.5 + 1.2) * 0.04 + 1
+    if (glow2Ref.current) glow2Ref.current.scale.setScalar(gp2)
+
+    if (lightRef.current) {
+      lightRef.current.intensity = 3 + Math.sin(t * 1.2) * 0.5
+    }
+  })
+
+  return (
+    <group>
+      <pointLight ref={lightRef} color={BRAND.teal} distance={12} decay={2} intensity={3} />
+      {/* Core sphere - solid glowing teal */}
+      <mesh ref={coreRef}>
+        <sphereGeometry args={[0.55, 48, 48]} />
+        <meshStandardMaterial
+          emissive={BRAND.tealBright}
+          emissiveIntensity={5}
+          color={BRAND.tealLight}
+          toneMapped={false}
+        />
+      </mesh>
+      {/* Inner glow halo */}
+      <mesh ref={glow1Ref}>
+        <sphereGeometry args={[0.9, 32, 32]} />
+        <meshBasicMaterial
+          color={BRAND.teal}
+          transparent
+          opacity={0.15}
+          blending={THREE.AdditiveBlending}
+          side={THREE.BackSide}
+        />
+      </mesh>
+      {/* Outer glow halo */}
+      <mesh ref={glow2Ref}>
+        <sphereGeometry args={[1.4, 32, 32]} />
+        <meshBasicMaterial
+          color={BRAND.tealGlow}
+          transparent
+          opacity={0.06}
+          blending={THREE.AdditiveBlending}
+          side={THREE.BackSide}
+        />
+      </mesh>
+    </group>
+  )
+}
+
+/* ═══════ ORBITAL RINGS ═══════ */
+
+function OrbitalRings() {
+  const ringRefs = useRef<THREE.Mesh[]>([])
+
+  const rings = useMemo(() => [
+    { radius: 2.8, tiltX: Math.PI / 2, tiltY: 0, tiltZ: -0.35, opacity: 0.12 },
+    { radius: 3.6, tiltX: Math.PI / 2 + 0.4, tiltY: 0.3, tiltZ: 0.2, opacity: 0.07 },
+    { radius: 4.2, tiltX: Math.PI / 2 - 0.25, tiltY: -0.2, tiltZ: -0.5, opacity: 0.05 },
+    { radius: 2.2, tiltX: Math.PI / 2 + 0.7, tiltY: 0.5, tiltZ: 0.1, opacity: 0.04 },
+    { radius: 5.0, tiltX: Math.PI / 2 + 0.15, tiltY: -0.1, tiltZ: -0.15, opacity: 0.03 },
+  ], [])
 
   useFrame(() => {
     if (!sceneVisible.current) return
-    if (lightRef.current) lightRef.current.position.set(mouse3D.x, mouse3D.y, mouse3D.z + 0.5)
-    if (glowRef.current) glowRef.current.position.set(mouse3D.x, mouse3D.y, mouse3D.z)
+    ringRefs.current.forEach((ref, i) => {
+      if (!ref) return
+      const mat = ref.material as THREE.MeshBasicMaterial
+      const base = rings[i].opacity
+      mat.opacity = base + Math.sin(Date.now() * 0.0008 + i * 1.5) * base * 0.3
+    })
   })
 
   return (
     <group>
-      <pointLight ref={lightRef} color={BRAND.tealBright} distance={6} decay={2} intensity={2} />
-      <mesh ref={glowRef}>
-        <sphereGeometry args={[0.15, 12, 12]} />
-        <meshBasicMaterial color={BRAND.tealGlow} transparent opacity={0.06} blending={THREE.AdditiveBlending} />
-      </mesh>
-    </group>
-  )
-}
-
-/* ═══════ SUN ═══════ */
-
-function Sun() {
-  const coreRef = useRef<THREE.Mesh>(null)
-  const coronaRefs = [useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null)]
-  const lightRef = useRef<THREE.PointLight>(null)
-  const goldDotRef = useRef<THREE.Mesh>(null)
-
-  useFrame((s) => {
-    const t = s.clock.getElapsedTime()
-    if (!sceneVisible.current) return
-    const pulse = Math.sin(t * 1.5) * 0.05 + 1
-    if (coreRef.current) coreRef.current.scale.setScalar(pulse)
-    const cp = [Math.sin(t * 1.2 + 0.5) * 0.04 + 1, Math.sin(t * 0.9 + 1.2) * 0.03 + 1, Math.sin(t * 0.6 + 2.0) * 0.05 + 1]
-    coronaRefs.forEach((ref, i) => { if (ref.current) ref.current.scale.setScalar(cp[i]) })
-    if (lightRef.current) lightRef.current.intensity = 4 + Math.sin(t * 1.5) * 0.6
-    if (goldDotRef.current) {
-      const a = t * 0.5
-      goldDotRef.current.position.set(Math.cos(a) * 0.9, Math.sin(a) * 0.9, Math.sin(a * 0.7) * 0.2)
-    }
-  })
-
-  return (
-    <group>
-      <pointLight ref={lightRef} color={BRAND.teal} distance={15} decay={2} intensity={4} />
-      <pointLight position={[0, 0, 0]} color={BRAND.gold} distance={10} decay={2} intensity={1.2} />
-      <mesh ref={coreRef}>
-        <sphereGeometry args={[0.85, 64, 64]} />
-        <meshStandardMaterial emissive={BRAND.teal} emissiveIntensity={4.5} color={BRAND.tealLight} toneMapped={false} />
-      </mesh>
-      <mesh ref={goldDotRef}>
-        <sphereGeometry args={[0.06, 12, 12]} />
-        <meshStandardMaterial emissive={BRAND.gold} emissiveIntensity={6} color={BRAND.gold} toneMapped={false} />
-      </mesh>
-      {[{ size: 1.2, opacity: 0.18, color: BRAND.teal }, { size: 1.7, opacity: 0.08, color: BRAND.tealLight }, { size: 2.4, opacity: 0.03, color: BRAND.tealGlow }].map((g, i) => (
-        <mesh key={i} ref={coronaRefs[i]}>
-          <sphereGeometry args={[g.size, 32, 32]} />
-          <meshBasicMaterial color={g.color} transparent opacity={g.opacity} blending={THREE.AdditiveBlending} side={THREE.BackSide} />
+      {rings.map((ring, i) => (
+        <mesh
+          key={i}
+          ref={(el) => { if (el) ringRefs.current[i] = el }}
+          rotation={[ring.tiltX, ring.tiltY, ring.tiltZ]}
+        >
+          <torusGeometry args={[ring.radius, 0.005, 8, 180]} />
+          <meshBasicMaterial color={BRAND.teal} transparent opacity={ring.opacity} />
         </mesh>
       ))}
     </group>
   )
 }
 
-/* ═══════ AXIS LINE ═══════ */
+/* ═══════ COLORED SATELLITE SHAPES ═══════ */
 
-function AxisLine() {
-  const matRef = useRef<THREE.LineBasicMaterial>(null)
-  const geometry = useMemo(() => {
-    const geo = new THREE.BufferGeometry()
-    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([-12, 0, 0, 12, 0, 0]), 3))
-    return geo
-  }, [])
-
-  useFrame(() => {
-    if (!sceneVisible.current) return
-    if (matRef.current) matRef.current.opacity = 0.12 + Math.sin(Date.now() * 0.001) * 0.04
-  })
-
-  return (
-    <group rotation={[0, 0, ORBIT_TILT]}>
-      <line geometry={geometry}>
-        <lineBasicMaterial ref={matRef} color={BRAND.teal} transparent opacity={0.12} />
-      </line>
-    </group>
-  )
-}
-
-/* ═══════ ACCENT SQUARES ═══════ */
-
-function AccentSquares() {
+function SatelliteShapes() {
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const dummy = useMemo(() => new THREE.Object3D(), [])
 
-  const squares = useMemo(() => ACCENT_COLORS.map((color, i) => ({
-    position: new THREE.Vector3((Math.random() - 0.5) * 16, (Math.random() - 0.5) * 4, (Math.random() - 0.5) * 6.4),
-    rotation: new THREE.Euler(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI),
-    rotSpeed: (Math.random() - 0.5) * 0.3,
-    floatSpeed: Math.random() * 0.2 + 0.05,
-    floatAmp: Math.random() * 0.15 + 0.05,
-    phase: Math.random() * Math.PI * 2,
-    baseSize: Math.random() * 0.08 + 0.04,
-    color: new THREE.Color(color),
-  })), [])
+  const satellites = useMemo(() => {
+    const count = 10
+    return Array.from({ length: count }, (_, i) => {
+      const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5
+      const orbitRadius = 3.2 + Math.random() * 2.5
+      const yOffset = (Math.random() - 0.5) * 3.0
+      return {
+        angle,
+        orbitRadius,
+        yOffset,
+        baseX: Math.cos(angle) * orbitRadius,
+        baseY: yOffset,
+        baseZ: Math.sin(angle) * orbitRadius,
+        rotation: new THREE.Euler(
+          Math.random() * Math.PI,
+          Math.random() * Math.PI,
+          Math.random() * Math.PI * 0.25, // slight rotation for diamond shapes
+        ),
+        rotSpeed: (Math.random() - 0.5) * 0.2,
+        floatSpeed: Math.random() * 0.15 + 0.05,
+        floatAmp: Math.random() * 0.12 + 0.04,
+        phase: Math.random() * Math.PI * 2,
+        baseSize: 0.06 + Math.random() * 0.08,
+        isDiamond: i % 3 === 0, // every 3rd is a diamond
+        color: new THREE.Color(SATELLITE_COLORS[i % SATELLITE_COLORS.length]),
+      }
+    })
+  }, [])
 
   useFrame((s) => {
     const t = s.clock.getElapsedTime()
     if (!meshRef.current || !sceneVisible.current) return
-    for (let i = 0; i < squares.length; i++) {
-      const sq = squares[i]
-      const px = sq.position.x + Math.sin(t * sq.floatSpeed + sq.phase) * 0.3
-      const py = sq.position.y + Math.sin(t * sq.floatSpeed * 0.7 + sq.phase) * sq.floatAmp
-      const pz = sq.position.z + Math.cos(t * sq.floatSpeed * 0.5 + sq.phase) * 0.2
+
+    for (let i = 0; i < satellites.length; i++) {
+      const sat = satellites[i]
+      const px = sat.baseX + Math.sin(t * sat.floatSpeed + sat.phase) * 0.25
+      const py = sat.baseY + Math.sin(t * sat.floatSpeed * 0.7 + sat.phase) * sat.floatAmp
+      const pz = sat.baseZ + Math.cos(t * sat.floatSpeed * 0.5 + sat.phase) * 0.15
+
       const dx = px - mouse3D.x
       const dy = py - mouse3D.y
       const distSq = dx * dx + dy * dy
       const cursorGlow = Math.max(0, 1 - Math.sqrt(distSq) / 3)
+
       dummy.position.set(px, py, pz)
-      dummy.rotation.set(sq.rotation.x + t * sq.rotSpeed, sq.rotation.y + t * sq.rotSpeed * 0.7, sq.rotation.z)
-      const s = sq.baseSize * (0.8 + Math.sin(t * 0.5 + sq.phase) * 0.2) * (1 + cursorGlow * 1.5)
-      dummy.scale.setScalar(Math.max(0.01, s))
+      dummy.rotation.set(
+        sat.rotation.x + t * sat.rotSpeed,
+        sat.rotation.y + t * sat.rotSpeed * 0.7,
+        sat.isDiamond ? Math.PI / 4 + t * sat.rotSpeed * 0.3 : sat.rotation.z,
+      )
+
+      const size = sat.baseSize * (0.85 + Math.sin(t * 0.5 + sat.phase) * 0.15) * (1 + cursorGlow * 1.8)
+      dummy.scale.setScalar(Math.max(0.01, size))
       dummy.updateMatrix()
       meshRef.current.setMatrixAt(i, dummy.matrix)
-      const c = sq.color.clone().lerp(new THREE.Color(1, 1, 1), cursorGlow * 0.6)
+
+      const c = sat.color.clone().lerp(new THREE.Color(1, 1, 1), cursorGlow * 0.5)
       meshRef.current.setColorAt(i, c)
     }
+
     meshRef.current.instanceMatrix.needsUpdate = true
     if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true
   })
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, squares.length]}>
+    <instancedMesh ref={meshRef} args={[undefined, undefined, satellites.length]}>
       <boxGeometry args={[1, 1, 1]} />
-      <meshBasicMaterial transparent opacity={0.7} />
+      <meshBasicMaterial transparent opacity={0.8} />
     </instancedMesh>
-  )
-}
-
-/* ═══════ ORBIT RING ═══════ */
-
-function OrbitRing({ radius, color, opacity = 0.08 }: { radius: number; color: string; opacity?: number }) {
-  const matRef = useRef<THREE.MeshBasicMaterial>(null)
-  const entryRef = useRef(0)
-  useFrame(() => {
-    if (!sceneVisible.current) return
-    entryRef.current = Math.min(1, entryRef.current + 0.008)
-    if (matRef.current) matRef.current.opacity = opacity * entryRef.current
-  })
-  return (
-    <mesh rotation={[Math.PI / 2 + ORBIT_TILT, 0, 0]}>
-      <torusGeometry args={[radius, 0.006, 8, 128]} />
-      <meshBasicMaterial ref={matRef} color={color} transparent opacity={0} />
-    </mesh>
-  )
-}
-
-/* ═══════ PRODUCT PLANET ═══════ */
-
-function ProductPlanet({ config }: { config: ProductPlanet }) {
-  const groupRef = useRef<THREE.Group>(null)
-  const sphereRef = useRef<THREE.Mesh>(null)
-  const morphRef = useRef<THREE.Mesh>(null)
-  const glowRef = useRef<THREE.Mesh>(null)
-  const ringRef = useRef<THREE.Mesh>(null)
-  const scaleRef = useRef(0.01)
-  const morphVal = useRef(0)
-
-  useFrame((s) => {
-    const t = s.clock.getElapsedTime()
-    if (!sceneVisible.current) return
-    if (t > 1.5) scaleRef.current += (1 - scaleRef.current) * 0.03
-    const entry = Math.min(1, scaleRef.current)
-    if (t > config.morphDelay) morphVal.current = Math.min(1, morphVal.current + 1 / (config.morphDuration * 60))
-    const m = morphVal.current
-    const smooth = m < 0.5 ? 4 * m * m * m : 1 - Math.pow(-2 * m + 2, 3) / 2
-
-    const gx = groupRef.current?.position.x ?? 0
-    const gy = groupRef.current?.position.y ?? 0
-    const cdx = gx - mouse3D.x
-    const cdy = gy - mouse3D.y
-    const cDist = Math.sqrt(cdx * cdx + cdy * cdy)
-    const cursorBoost = Math.max(0, 1 - cDist / 2) * 0.8
-
-    const angle = t * config.speed
-    const r = config.orbitRadius
-    const x = Math.cos(angle) * r
-    const z = Math.sin(angle) * r
-    const y = Math.sin(angle) * Math.sin(ORBIT_TILT) * 0.3
-    if (groupRef.current) groupRef.current.position.set(x, y, z)
-
-    if (sphereRef.current) {
-      sphereRef.current.rotation.y = t * 0.3
-      sphereRef.current.scale.setScalar(Math.max(0.001, entry * (1 - smooth) * (1 + cursorBoost * 0.3)))
-      const sm = sphereRef.current.material as THREE.MeshStandardMaterial
-      sm.opacity = 1 - smooth
-      sm.emissiveIntensity = 0.5 + cursorBoost * 3
-    }
-    if (morphRef.current) {
-      morphRef.current.rotation.y = t * 0.4
-      morphRef.current.scale.setScalar(Math.max(0.001, entry * smooth * (1 + cursorBoost * 0.4)))
-      const mm = morphRef.current.material as THREE.MeshStandardMaterial
-      mm.opacity = smooth
-      mm.emissiveIntensity = 1 + cursorBoost * 4
-    }
-    if (glowRef.current) {
-      const gp = Math.sin(t * 2) * 0.08 + 1
-      glowRef.current.scale.setScalar(entry * gp * 2 * (1 + cursorBoost))
-      ;(glowRef.current.material as THREE.MeshBasicMaterial).opacity = 0.04 + cursorBoost * 0.15
-    }
-    if (ringRef.current && config.hasRing) {
-      ringRef.current.rotation.x = Math.PI / 2.5
-      ringRef.current.rotation.z = Math.sin(t * 0.2) * 0.05
-      ringRef.current.scale.setScalar(entry * (0.5 + smooth * 0.5))
-      ;(ringRef.current.material as THREE.MeshBasicMaterial).opacity = (0.15 + cursorBoost * 0.2) * entry
-    }
-  })
-
-  const morphGeo = () => {
-    switch (config.morphType) {
-      case 'capsule': return <capsuleGeometry args={[config.radius * 0.65, config.radius * 1.2, 16, 32]} />
-      case 'octahedron': return <octahedronGeometry args={[config.radius, 0]} />
-      default: return <sphereGeometry args={[config.radius, 48, 48]} />
-    }
-  }
-
-  return (
-    <group ref={groupRef}>
-      <mesh ref={sphereRef}>
-        <sphereGeometry args={[config.radius, 48, 48]} />
-        <meshStandardMaterial color={config.color} emissive={config.color} emissiveIntensity={0.5} transparent opacity={1} roughness={0.3} metalness={0.2} toneMapped={false} />
-      </mesh>
-      <mesh ref={morphRef} scale={0.001}>
-        {morphGeo()}
-        <meshStandardMaterial color={config.morphColor} emissive={config.morphColor} emissiveIntensity={1} transparent opacity={0} roughness={0.25} metalness={0.3} toneMapped={false} />
-      </mesh>
-      <mesh ref={glowRef}>
-        <sphereGeometry args={[config.radius * 1.15, 24, 24]} />
-        <meshBasicMaterial color={config.color} transparent opacity={0.04} blending={THREE.AdditiveBlending} side={THREE.BackSide} />
-      </mesh>
-      {config.hasRing && (
-        <mesh ref={ringRef}>
-          <torusGeometry args={[config.radius * 1.8, 0.02, 8, 64]} />
-          <meshBasicMaterial color={config.color} transparent opacity={0.15} blending={THREE.AdditiveBlending} />
-        </mesh>
-      )}
-    </group>
   )
 }
 
@@ -545,6 +416,19 @@ function AmbientDust() {
   )
 }
 
+/* ═══════ CURSOR LIGHT ═══════ */
+
+function CursorLight() {
+  const lightRef = useRef<THREE.PointLight>(null)
+
+  useFrame(() => {
+    if (!sceneVisible.current) return
+    if (lightRef.current) lightRef.current.position.set(mouse3D.x, mouse3D.y, mouse3D.z + 0.5)
+  })
+
+  return <pointLight ref={lightRef} color={BRAND.tealBright} distance={6} decay={2} intensity={1.5} />
+}
+
 /* ═══════ SCENE LIGHTING ═══════ */
 
 function SceneLighting() {
@@ -574,8 +458,8 @@ function CameraController() {
     const sp = Math.min(1, scrollY / (vh * 2.5))
     const z = THREE.MathUtils.lerp(8, 14, sp)
     const parallaxStrength = 1 - sp * 0.7
-    const x = mouse.current.x * 0.5 * parallaxStrength
-    const y = -mouse.current.y * 0.3 * parallaxStrength
+    const x = mouse.current.x * 0.4 * parallaxStrength
+    const y = -mouse.current.y * 0.25 * parallaxStrength
     target.current.set(x, y, z)
     camera.position.lerp(target.current, 0.04)
     camera.lookAt(0, 0, 0)
@@ -615,20 +499,17 @@ export function SolarSystemScene() {
         <CameraController />
         <CursorLight />
         <Stars radius={60} depth={70} count={400} factor={3} saturation={0} fade speed={0.2} />
-        <CrystalCage />
-        <AxisLine />
-        <Sun />
+        <Nucleus />
+        <WireframeGlobe />
+        <OrbitalRings />
         <SolarParticles />
-        <AccentSquares />
-        {PRODUCT_PLANETS.map((p) => (
-          <OrbitRing key={`orbit-${p.name}`} radius={p.orbitRadius} color={p.color} opacity={0.08} />
-        ))}
-        {PRODUCT_PLANETS.map((p) => (
-          <ProductPlanet key={p.name} config={p} />
-        ))}
+        <SatelliteShapes />
         <AmbientDust />
       </Canvas>
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, transparent 30%, rgba(5,5,7,0.55) 100%)' }} />
+      {/* Strong vignette overlay matching the reference */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'radial-gradient(ellipse at center, transparent 25%, rgba(5,5,7,0.45) 60%, rgba(5,5,7,0.85) 100%)',
+      }} />
     </div>
   )
 }
