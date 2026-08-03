@@ -432,7 +432,7 @@ function SolarParticles() {
     phase: Math.random() * Math.PI * 2,
     vx: 0, vy: 0, vz: 0,
     px: 0, py: 0, pz: 0,
-  }))
+  })))
 
   useFrame((s) => {
     const t = s.clock.getElapsedTime()

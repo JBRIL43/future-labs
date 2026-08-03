@@ -26,11 +26,11 @@ function Octahedron({ className, style }: ShapeProps) {
   return (
     <div className={className} style={style}>
       <svg viewBox="0 0 100 100" className="w-full h-full">
-        <polygon points="50,5 95,50 50,95 5,50" fill="none" stroke="rgba(16,185,129,0.15)" strokeWidth="0.5" />
-        <polygon points="50,5 95,50 50,50" fill="rgba(16,185,129,0.02)" stroke="rgba(16,185,129,0.12)" strokeWidth="0.3" />
-        <polygon points="50,5 50,50 5,50" fill="rgba(16,185,129,0.03)" stroke="rgba(16,185,129,0.12)" strokeWidth="0.3" />
-        <polygon points="95,50 50,95 50,50" fill="rgba(16,185,129,0.02)" stroke="rgba(16,185,129,0.12)" strokeWidth="0.3" />
-        <polygon points="5,50 50,95 50,50" fill="rgba(16,185,129,0.01)" stroke="rgba(16,185,129,0.12)" strokeWidth="0.3" />
+        <polygon points="50,5 95,50 50,95 5,50" fill="none" stroke="rgba(13,148,136,0.15)" strokeWidth="0.5" />
+        <polygon points="50,5 95,50 50,50" fill="rgba(13,148,136,0.02)" stroke="rgba(13,148,136,0.12)" strokeWidth="0.3" />
+        <polygon points="50,5 50,50 5,50" fill="rgba(13,148,136,0.03)" stroke="rgba(13,148,136,0.12)" strokeWidth="0.3" />
+        <polygon points="95,50 50,95 50,50" fill="rgba(13,148,136,0.02)" stroke="rgba(13,148,136,0.12)" strokeWidth="0.3" />
+        <polygon points="5,50 50,95 50,50" fill="rgba(13,148,136,0.01)" stroke="rgba(13,148,136,0.12)" strokeWidth="0.3" />
       </svg>
     </div>
   )
@@ -40,7 +40,7 @@ function Ring3D({ className, style }: ShapeProps) {
   return (
     <div className={className} style={style}>
       <div className="w-full h-full rounded-full border border-emerald-500/20" style={{
-        boxShadow: '0 0 15px rgba(16,185,129,0.05), inset 0 0 15px rgba(16,185,129,0.03)',
+        boxShadow: '0 0 15px rgba(13,148,136,0.05), inset 0 0 15px rgba(13,148,136,0.03)',
       }} />
     </div>
   )
@@ -50,8 +50,8 @@ function Sphere3D({ className, style }: ShapeProps) {
   return (
     <div className={className} style={style}>
       <div className="w-full h-full rounded-full" style={{
-        background: 'radial-gradient(circle at 30% 30%, rgba(16,185,129,0.08), rgba(16,185,129,0.02) 50%, transparent 70%)',
-        boxShadow: '0 0 20px rgba(16,185,129,0.05), inset 0 0 20px rgba(16,185,129,0.02)',
+        background: 'radial-gradient(circle at 30% 30%, rgba(13,148,136,0.08), rgba(13,148,136,0.02) 50%, transparent 70%)',
+        boxShadow: '0 0 20px rgba(13,148,136,0.05), inset 0 0 20px rgba(13,148,136,0.02)',
       }} />
     </div>
   )
@@ -64,17 +64,17 @@ function EthCross3D({ className, style }: ShapeProps) {
       <svg viewBox="0 0 60 60" className="w-full h-full eth-cross-glow">
         {/* Axumite cross with 3D depth illusion */}
         <path d="M28 4v14H14v8h14v14h4V26h14v-8H32V4h-4z" 
-          fill="none" stroke="rgba(16,185,129,0.15)" strokeWidth="0.6" />
+          fill="none" stroke="rgba(13,148,136,0.15)" strokeWidth="0.6" />
         <path d="M26 8v10H16v4h10v10h8V22h10v-4H34V8h-8z" 
-          fill="none" stroke="rgba(16,185,129,0.08)" strokeWidth="0.4" strokeDasharray="2 2" />
+          fill="none" stroke="rgba(13,148,136,0.08)" strokeWidth="0.4" strokeDasharray="2 2" />
         {/* Diamond center */}
         <rect x="26" y="26" width="8" height="8" transform="rotate(45 30 30)" 
           fill="none" stroke="rgba(245,158,11,0.1)" strokeWidth="0.4" />
         {/* Corner dots */}
-        <circle cx="30" cy="4" r="1" fill="rgba(16,185,129,0.2)" />
-        <circle cx="30" cy="56" r="1" fill="rgba(16,185,129,0.2)" />
-        <circle cx="4" cy="30" r="1" fill="rgba(16,185,129,0.2)" />
-        <circle cx="56" cy="30" r="1" fill="rgba(16,185,129,0.2)" />
+        <circle cx="30" cy="4" r="1" fill="rgba(13,148,136,0.2)" />
+        <circle cx="30" cy="56" r="1" fill="rgba(13,148,136,0.2)" />
+        <circle cx="4" cy="30" r="1" fill="rgba(13,148,136,0.2)" />
+        <circle cx="56" cy="30" r="1" fill="rgba(13,148,136,0.2)" />
       </svg>
     </div>
   )

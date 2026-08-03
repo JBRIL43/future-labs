@@ -56,10 +56,10 @@ export function Hero() {
             variant="outline"
             className="border-primary/30 text-primary px-5 py-2 text-sm rounded-full relative overflow-hidden"
             style={{
-              boxShadow: '0 0 20px rgba(16,185,129,0.1), inset 0 1px 0 rgba(16,185,129,0.1)',
+              boxShadow: '0 0 20px rgba(13,148,136,0.1), inset 0 1px 0 rgba(13,148,136,0.1)',
             }}
           >
-            <span className="relative z-10">The Solar System of Innovation</span>
+            <span className="relative z-10">Technology Innovation Lab</span>
             <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10" />
           </Badge>
         </motion.div>
@@ -69,11 +69,13 @@ export function Hero() {
           variants={itemVariants}
           className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight text-foreground leading-[1.05]"
           style={{
-            textShadow: '0 0 60px rgba(16,185,129,0.06), 0 4px 30px rgba(0,0,0,0.6)',
+            textShadow: '0 4px 30px rgba(0,0,0,0.6)',
           }}
         >
           Building the{' '}
-          <span className="gradient-text">Future of Ethiopia</span>{' '}
+          <span className="text-primary" style={{ textShadow: '0 0 40px rgba(13,148,136,0.3)' }}>Future</span>{' '}
+          of{' '}
+          <span className="text-primary" style={{ textShadow: '0 0 40px rgba(13,148,136,0.3)' }}>Ethiopia</span>{' '}
           Through Technology
         </motion.h1>
 
@@ -96,7 +98,7 @@ export function Hero() {
             className="min-w-[200px] relative overflow-hidden group"
             onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
             style={{
-              boxShadow: '0 0 30px rgba(16,185,129,0.2), 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
+              boxShadow: '0 0 30px rgba(13,148,136,0.2), 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
             }}
           >
             <span className="relative z-10">Explore Our Work</span>
@@ -108,7 +110,7 @@ export function Hero() {
             className="min-w-[200px]"
             onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
             style={{
-              boxShadow: '0 0 20px rgba(16,185,129,0.05), 0 4px 15px rgba(0,0,0,0.2)',
+              boxShadow: '0 0 20px rgba(13,148,136,0.05), 0 4px 15px rgba(0,0,0,0.2)',
             }}
           >
             Get in Touch
@@ -136,7 +138,7 @@ export function Hero() {
         </motion.button>
         <motion.div
           className="w-6 h-6 rounded-full border border-primary/20"
-          style={{ boxShadow: '0 0 10px rgba(16,185,129,0.1)' }}
+          style={{ boxShadow: '0 0 10px rgba(13,148,136,0.1)' }}
           animate={{ rotate: 360 }}
           transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
         >
@@ -146,8 +148,8 @@ export function Hero() {
 
       {/* Bottom edge line */}
       <div className="absolute bottom-0 left-0 right-0 z-20 h-px" style={{
-        background: 'linear-gradient(90deg, transparent, rgba(16,185,129,0.3), rgba(16,185,129,0.5), rgba(16,185,129,0.3), transparent)',
-        boxShadow: '0 0 20px rgba(16,185,129,0.1)',
+        background: 'linear-gradient(90deg, transparent, rgba(13,148,136,0.3), rgba(13,148,136,0.5), rgba(13,148,136,0.3), transparent)',
+        boxShadow: '0 0 20px rgba(13,148,136,0.1)',
       }} />
     </section>
   )

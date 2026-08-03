@@ -66,7 +66,7 @@ export function Products() {
       className="py-24 lg:py-32 relative section-3d"
     >
       {/* Subtle radial gradient background */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.03)_0%,transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(13,148,136,0.03)_0%,transparent_70%)]" />
       <div className="absolute top-0 left-0 right-0 h-px tricolor-line" />
 
       <FloatingShapes3D variant="subtle" />

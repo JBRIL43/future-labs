@@ -43,7 +43,7 @@ export function TiltCard3D({
     setShadowStyle({
       boxShadow: `
         ${shadowX}px ${shadowY + 8}px 30px rgba(0,0,0,0.4),
-        0 0 ${isHovering ? 40 : 20}px rgba(16,185,129,${isHovering ? 0.1 : 0.05}),
+        0 0 ${isHovering ? 40 : 20}px rgba(13,148,136,${isHovering ? 0.1 : 0.05}),
         inset 0 1px 0 rgba(255,255,255,${isHovering ? 0.06 : 0.03})
       `,
     })
@@ -77,7 +77,7 @@ export function TiltCard3D({
         className="absolute inset-0 rounded-[inherit] pointer-events-none z-[1] transition-opacity duration-300"
         style={{
           opacity: isHovering ? glareOpacity : 0,
-          background: `radial-gradient(600px circle at ${shinePos.x} ${shinePos.y}, rgba(16,185,129,0.15), transparent 40%)`,
+          background: `radial-gradient(600px circle at ${shinePos.x} ${shinePos.y}, rgba(13,148,136,0.15), transparent 40%)`,
           borderRadius: 'inherit',
         }}
       />

@@ -305,7 +305,7 @@ export function Contact() {
                   type="submit"
                   className="w-full"
                   disabled={isSubmitting}
-                  style={{ boxShadow: '0 0 25px rgba(16,185,129,0.2), 0 4px 15px rgba(0,0,0,0.3)' }}
+                  style={{ boxShadow: '0 0 25px rgba(13,148,136,0.2), 0 4px 15px rgba(0,0,0,0.3)' }}
                 >
                   {isSubmitting ? (
                     <>

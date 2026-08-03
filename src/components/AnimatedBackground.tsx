@@ -146,7 +146,7 @@ export function AnimatedBackground() {
 
       if (isActive) {
         const g = ctx.createRadialGradient(mx, my, 0, mx, my, 80)
-        g.addColorStop(0, 'rgba(16,185,129,0.035)')
+        g.addColorStop(0, 'rgba(13,148,136,0.035)')
         g.addColorStop(1, 'transparent')
         ctx.fillStyle = g
         ctx.fillRect(mx - 80, my - 80, 160, 160)
@@ -249,7 +249,7 @@ export function AnimatedBackground() {
       ctx.save()
       ctx.translate(w / 2, h / 2)
       ctx.rotate(time * 0.06)
-      ctx.strokeStyle = `rgba(16,185,129,${cp})`
+      ctx.strokeStyle = `rgba(13,148,136,${cp})`
       ctx.lineWidth = 0.3
       drawEthiopianCross(ctx, 0, 0, Math.min(w, h) * 0.2)
       ctx.restore()

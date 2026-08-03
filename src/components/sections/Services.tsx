@@ -166,7 +166,7 @@ export function Services() {
                     <div
                       className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 transition-all duration-500 group-hover:bg-primary/20"
                       style={{
-                        boxShadow: '0 0 20px rgba(16,185,129,0.08)',
+                        boxShadow: '0 0 20px rgba(13,148,136,0.08)',
                         transform: 'translateZ(30px)',
                       }}
                     >

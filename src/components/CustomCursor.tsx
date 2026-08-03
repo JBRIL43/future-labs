@@ -60,7 +60,7 @@ export function CustomCursor() {
       >
         <div className="relative -translate-x-1/2 -translate-y-1/2">
           <div className="w-2 h-2 rounded-full bg-primary" style={{
-            boxShadow: '0 0 8px rgba(16,185,129,0.8), 0 0 20px rgba(16,185,129,0.3)',
+            boxShadow: '0 0 8px rgba(13,148,136,0.8), 0 0 20px rgba(13,148,136,0.3)',
           }} />
         </div>
       </div>
@@ -71,7 +71,7 @@ export function CustomCursor() {
       >
         <div className="relative -translate-x-1/2 -translate-y-1/2">
           <div className="w-7 h-7 rounded-full border border-primary/25" style={{
-            boxShadow: '0 0 10px rgba(16,185,129,0.08)',
+            boxShadow: '0 0 10px rgba(13,148,136,0.08)',
           }} />
         </div>
       </div>

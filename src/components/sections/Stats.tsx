@@ -55,7 +55,7 @@ function StatItem({ value, label, numericPart, suffix = '' }: StatItemProps) {
         <span
           ref={displayRef}
           className="gradient-text text-4xl md:text-5xl lg:text-6xl font-bold"
-          style={{ textShadow: '0 0 30px rgba(16,185,129,0.3)' }}
+          style={{ textShadow: '0 0 30px rgba(13,148,136,0.3)' }}
         >
           0{suffix}
         </span>
@@ -85,7 +85,7 @@ export function Stats() {
       className="py-24 lg:py-32 relative section-3d"
     >
       {/* Radial gradient background */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.05)_0%,transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(13,148,136,0.05)_0%,transparent_70%)]" />
       <div className="absolute top-0 left-0 right-0 h-px tricolor-line" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
