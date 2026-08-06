@@ -3,7 +3,7 @@
 import { useRef } from 'react'
 import Image from 'next/image'
 import { motion, useInView } from 'framer-motion'
-import { CheckCircle2, Lock, ArrowRight } from 'lucide-react'
+import { CheckCircle2, ArrowRight } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { TiltCard3D } from '@/components/TiltCard3D'
@@ -20,39 +20,17 @@ const features = [
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-}
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: 'easeOut' },
-  },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
 }
 
 const productCardVariants = {
   hidden: { opacity: 0, y: 40 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, ease: 'easeOut' },
-  },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
 }
 
 const featureItemVariants = {
   hidden: { opacity: 0, x: -10 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.4, ease: 'easeOut' },
-  },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: 'easeOut' } },
 }
 
 export function Products() {
@@ -65,10 +43,8 @@ export function Products() {
       ref={sectionRef}
       className="py-24 lg:py-32 relative section-3d"
     >
-      {/* Subtle radial gradient background */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(13,148,136,0.03)_0%,transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,201,167,0.03)_0%,transparent_70%)]" />
       <div className="absolute top-0 left-0 right-0 h-px tricolor-line" />
-
       <FloatingShapes3D variant="subtle" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -100,7 +76,7 @@ export function Products() {
           <TiltCard3D
             tiltDegree={5}
             scaleOnHover={1.01}
-            className="glass glow-emerald-strong rounded-3xl overflow-hidden mb-20"
+            className="glass glow-emerald-strong rounded-3xl overflow-hidden relative"
           >
             <div className="grid lg:grid-cols-2">
               {/* Left: Product Image */}
@@ -116,11 +92,6 @@ export function Products() {
                   priority
                 />
               </div>
-
-              {/* 3D rotating ring decoration */}
-              <div
-                className="absolute top-4 right-4 w-[60px] h-[60px] shape-cube-reverse opacity-20"
-              />
 
               {/* Right: Product Details */}
               <div className="p-8 lg:p-12 flex flex-col justify-center">
@@ -183,7 +154,7 @@ export function Products() {
                   ))}
                 </motion.div>
 
-                {/* CTA Button */}
+                {/* CTA */}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
@@ -200,54 +171,6 @@ export function Products() {
             </div>
           </TiltCard3D>
         </motion.div>
-
-        {/* More Products Coming Soon */}
-        <div className="text-center">
-          <motion.h3
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.3 }}
-            className="text-xl font-semibold mb-3"
-          >
-            More Products Coming Soon
-          </motion.h3>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.35 }}
-            className="text-muted-foreground text-sm mb-10"
-          >
-            We&apos;re constantly innovating. Stay tuned for exciting new products in our pipeline.
-          </motion.p>
-
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto"
-            variants={containerVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
-          >
-            {Array.from({ length: 3 }).map((_, i) => (
-              <motion.div
-                key={i}
-                variants={cardVariants}
-              >
-                <TiltCard3D
-                  tiltDegree={12}
-                  className="glass rounded-2xl p-6"
-                >
-                  <div className="flex flex-col items-center justify-center text-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <Lock className="w-5 h-5 text-primary" />
-                    </div>
-                    <span className="text-sm font-medium text-muted-foreground">
-                      Product in Development
-                    </span>
-                  </div>
-                </TiltCard3D>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
       </div>
     </section>
   )

@@ -1,7 +1,5 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-node_modules
+# ── Dependencies ────────────────────────────────────────────
+node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -10,45 +8,73 @@ node_modules
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
-
-# next.js
+# ── Next.js build output ─────────────────────────────────────
 /.next/
 /out/
-
-# production
 /build
 
-# misc
+# ── Testing ──────────────────────────────────────────────────
+/coverage
+/tests
+/test
+
+# ── Environment & secrets ────────────────────────────────────
+.env
+.env*
+
+# ── TypeScript generated ─────────────────────────────────────
+*.tsbuildinfo
+next-env.d.ts
+
+# ── OS / editor ──────────────────────────────────────────────
 .DS_Store
 *.pem
+.vscode/
+.idea/
 
-# debug
+# ── Logs & debug ─────────────────────────────────────────────
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
-
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-local-*
-.claude
-.z-ai-config
-*.log
 dev.log
 dev.out.log
-test
+server.log
+
+# ── Vercel / deployment ──────────────────────────────────────
+.vercel
+
+# ── Dev scripts pid / temp ───────────────────────────────────
+.zscripts/dev.pid
+
+# ── Screenshots / design assets (local only) ─────────────────
+screenshot*.png
+screenshot*.jpg
+
+# ── AI / tooling artefacts ───────────────────────────────────
+.claude
+.z-ai-config
+tool-results/
+worklog.md
+Vibe_Prompt.txt
+future-labs-brand.html
+local-*
 prompt
 
-server.log
-# Skills directory
+# ── Upload / download temp dirs ──────────────────────────────
+upload/
+download/
+
+# ── Database (local SQLite) ──────────────────────────────────
+db/*.db
+db/*.db-journal
+db/*.db-shm
+db/*.db-wal
+
+# ── Mini-services build output ───────────────────────────────
+mini-services/**
+!mini-services/.gitkeep
+
+# ── Skills ───────────────────────────────────────────────────
 /skills/

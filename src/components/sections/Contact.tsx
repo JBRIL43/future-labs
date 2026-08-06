@@ -21,8 +21,8 @@ const contactInfo = [
   {
     icon: Phone,
     label: 'Phone',
-    value: '+251 11 234 5678',
-    href: 'tel:+251112345678',
+    value: '+251 922 871 082',
+    href: 'tel:+251922871082',
   },
   {
     icon: MapPin,
@@ -305,7 +305,7 @@ export function Contact() {
                   type="submit"
                   className="w-full"
                   disabled={isSubmitting}
-                  style={{ boxShadow: '0 0 25px rgba(13,148,136,0.2), 0 4px 15px rgba(0,0,0,0.3)' }}
+                  style={{ boxShadow: '0 0 25px rgba(0,201,167,0.2), 0 4px 15px rgba(0,0,0,0.3)' }}
                 >
                   {isSubmitting ? (
                     <>

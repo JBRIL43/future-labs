@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -98,16 +97,17 @@ export function Navigation() {
           className="flex items-center gap-2.5"
           aria-label="Future Labs - Go to top"
         >
-          <Image
-            src="/fl-logo.png"
-            alt="Future Labs"
-            width={32}
-            height={32}
-            className="shrink-0"
-          />
-          <span className="text-white text-lg font-bold tracking-tight">
-            Future Labs
-          </span>
+          {/* FL mark — Circuit Teal on dark */}
+          <svg width="32" height="32" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="56" height="56" rx="10" fill="#00C9A7" fillOpacity="0.12"/>
+            <path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M34 20 L34 42 L46 42" stroke="#00C9A7" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <circle cx="34" cy="26" r="2.5" fill="#F5A623"/>
+          </svg>
+          <div className="flex flex-col leading-none">
+            <span className="text-white text-lg font-bold tracking-tight">Future Labs</span>
+            <span className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/40">Software Technologies</span>
+          </div>
         </a>
 
         {/* Desktop Nav Links */}
@@ -175,12 +175,12 @@ export function Navigation() {
             >
               <SheetHeader className="pt-8 pb-2">
                 <SheetTitle className="flex items-center gap-2.5 text-white">
-                  <Image
-                    src="/fl-logo.png"
-                    alt="Future Labs"
-                    width={28}
-                    height={28}
-                  />
+                  <svg width="28" height="28" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect width="56" height="56" rx="10" fill="#00C9A7" fillOpacity="0.12"/>
+                    <path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M34 20 L34 42 L46 42" stroke="#00C9A7" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="34" cy="26" r="2.5" fill="#F5A623"/>
+                  </svg>
                   Future Labs
                 </SheetTitle>
               </SheetHeader>

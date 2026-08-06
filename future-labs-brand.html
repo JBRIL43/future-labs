@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Future Labs — Brand Identity</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:       #0A0A0F;
+    --ink-mid:   #1A1A2E;
+    --surface:   #F7F7FA;
+    --white:     #FFFFFF;
+    --teal:      #00C9A7;
+    --teal-deep: #00896F;
+    --amber:     #F5A623;
+    --slate:     #6B7280;
+    --slate-light: #E5E7EB;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-mono:    'Space Mono', monospace;
+  }
+
+  body {
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-display);
+    line-height: 1.5;
+  }
+
+  /* ── PAGE HEADER ─────────────────────────────────────── */
+  .page-header {
+    background: var(--ink);
+    color: var(--white);
+    padding: 40px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .page-header h1 {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--slate);
+  }
+  .page-header span {
+    font-size: 13px;
+    color: var(--teal);
+    font-family: var(--font-mono);
+  }
+
+  /* ── SECTIONS ────────────────────────────────────────── */
+  .section {
+    padding: 80px 60px;
+    border-bottom: 1px solid var(--slate-light);
+  }
+  .section:last-child { border-bottom: none; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--slate-light);
+  }
+
+  /* ── LOGO SECTION ────────────────────────────────────── */
+  .logo-hero {
+    background: var(--ink);
+    padding: 80px 60px;
+  }
+  .logo-hero .section-label { color: #444; }
+  .logo-hero .section-label::after { background: #333; }
+
+  .logo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .logo-cell {
+    padding: 60px 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+  }
+  .logo-cell.dark  { background: var(--ink-mid); }
+  .logo-cell.light { background: var(--white); }
+  .logo-cell.teal  { background: var(--teal); }
+  .logo-cell.mid   { background: #14142A; }
+
+  /* ── THE MARK ────────────────────────────────────────── */
+  .fl-mark {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+  }
+
+  .logo-lockup {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .logo-wordmark {
+    display: flex;
+    flex-direction: column;
+  }
+  .logo-name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .logo-tagline {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-top: 5px;
+    opacity: 0.55;
+  }
+
+  /* on dark */
+  .logo-cell.dark .logo-name,
+  .logo-cell.mid .logo-name   { color: var(--white); }
+  .logo-cell.dark .logo-tagline,
+  .logo-cell.mid .logo-tagline { color: var(--white); }
+
+  /* on light */
+  .logo-cell.light .logo-name    { color: var(--ink); }
+  .logo-cell.light .logo-tagline { color: var(--ink); }
+
+  /* on teal */
+  .logo-cell.teal .logo-name    { color: var(--ink); }
+  .logo-cell.teal .logo-tagline { color: var(--ink); }
+
+  .cell-note {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    opacity: 0.4;
+    font-family: var(--font-mono);
+  }
+  .logo-cell.dark .cell-note,
+  .logo-cell.mid .cell-note  { color: var(--white); }
+  .logo-cell.light .cell-note { color: var(--ink); }
+  .logo-cell.teal .cell-note { color: var(--ink); }
+
+  /* ── MARK ONLY ROW ───────────────────────────────────── */
+  .mark-sizes {
+    display: flex;
+    align-items: flex-end;
+    gap: 40px;
+    margin-top: 48px;
+    padding: 48px;
+    background: var(--ink-mid);
+    border-radius: 4px;
+  }
+  .mark-size-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .mark-size-label {
+    font-size: 10px;
+    color: #555;
+    font-family: var(--font-mono);
+  }
+
+  /* ── COLORS ──────────────────────────────────────────── */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+  }
+  .color-swatch {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    position: relative;
+  }
+  .color-name {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .color-hex {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+  .color-role {
+    font-size: 10px;
+    opacity: 0.55;
+    margin-top: 4px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── TYPE ────────────────────────────────────────────── */
+  .type-specimen {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 0;
+  }
+  .type-meta {
+    padding: 40px 40px 40px 0;
+    border-right: 1px solid var(--slate-light);
+  }
+  .type-meta-label {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 8px;
+  }
+  .type-meta-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .type-meta-use {
+    font-size: 12px;
+    color: var(--slate);
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+  .type-display {
+    padding: 40px 0 40px 40px;
+  }
+  .type-row {
+    border-bottom: 1px solid var(--slate-light);
+    padding: 32px 0 32px 40px;
+  }
+  .type-row:last-child { border-bottom: none; }
+
+  /* ── USAGE ───────────────────────────────────────────── */
+  .usage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .usage-card {
+    border: 1px solid var(--slate-light);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .usage-card-top {
+    padding: 40px;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .usage-card-bottom {
+    border-top: 1px solid var(--slate-light);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .usage-card-bottom .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    flex-shrink: 0;
+  }
+  .usage-card-bottom p {
+    font-size: 12px;
+    color: var(--slate);
+    line-height: 1.5;
+  }
+
+  /* ── EMAIL SIG ───────────────────────────────────────── */
+  .sig-demo {
+    background: var(--white);
+    border: 1px solid var(--slate-light);
+    border-radius: 4px;
+    padding: 40px;
+    max-width: 480px;
+  }
+  .sig-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .sig-role {
+    font-size: 13px;
+    color: var(--slate);
+    margin-top: 2px;
+  }
+  .sig-divider {
+    width: 32px;
+    height: 2px;
+    background: var(--teal);
+    margin: 16px 0;
+  }
+  .sig-company {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .sig-contact {
+    font-size: 12px;
+    color: var(--slate);
+    margin-top: 4px;
+    font-family: var(--font-mono);
+  }
+
+  /* ── APP ICON ────────────────────────────────────────── */
+  .icon-grid {
+    display: flex;
+    gap: 24px;
+    align-items: flex-end;
+  }
+  .app-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 22.37%;
+    background: var(--ink);
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <h1>Future Labs — Brand Identity System</h1>
+  <span>v1.0 · 2026</span>
+</div>
+
+<!-- ── LOGO ─────────────────────────────────────────────── -->
+<div class="logo-hero">
+  <div class="section-label" style="color:#444;">01 — Logo</div>
+
+  <div class="logo-grid">
+
+    <!-- Dark bg — primary usage -->
+    <div class="logo-cell dark">
+      <div class="logo-lockup">
+        <!-- THE MARK -->
+        <svg class="fl-mark" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="56" height="56" rx="10" fill="#00C9A7" fill-opacity="0.12"/>
+          <!-- F path -->
+          <path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- L path -->
+          <path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- junction dot -->
+          <circle cx="34" cy="26" r="2.5" fill="#F5A623"/>
+        </svg>
+        <div class="logo-wordmark">
+          <span class="logo-name" style="color:#fff;">Future Labs</span>
+          <span class="logo-tagline" style="color:#fff;">Software Technologies</span>
+        </div>
+      </div>
+      <span class="cell-note">Primary — dark background</span>
+    </div>
+
+    <!-- Light bg -->
+    <div class="logo-cell light">
+      <div class="logo-lockup">
+        <svg class="fl-mark" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="56" height="56" rx="10" fill="#00C9A7" fill-opacity="0.1"/>
+          <path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00896F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M34 20 L34 42 L46 42" stroke="#00896F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="34" cy="26" r="2.5" fill="#F5A623"/>
+        </svg>
+        <div class="logo-wordmark">
+          <span class="logo-name" style="color:#0A0A0F;">Future Labs</span>
+          <span class="logo-tagline" style="color:#0A0A0F;">Software Technologies</span>
+        </div>
+      </div>
+      <span class="cell-note" style="color:#6B7280;">Light background</span>
+    </div>
+
+    <!-- Teal bg -->
+    <div class="logo-cell teal">
+      <div class="logo-lockup">
+        <svg class="fl-mark" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="56" height="56" rx="10" fill="#0A0A0F" fill-opacity="0.12"/>
+          <path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#0A0A0F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M34 20 L34 42 L46 42" stroke="#0A0A0F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="34" cy="26" r="2.5" fill="#1A1A2E"/>
+        </svg>
+        <div class="logo-wordmark">
+          <span class="logo-name" style="color:#0A0A0F;">Future Labs</span>
+          <span class="logo-tagline" style="color:#0A0A0F;">Software Technologies</span>
+        </div>
+      </div>
+      <span class="cell-note" style="color:#0A0A0F;">Brand teal background</span>
+    </div>
+
+    <!-- Mid dark — secondary dark -->
+    <div class="logo-cell mid">
+      <div class="logo-lockup">
+        <svg class="fl-mark" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="56" height="56" rx="10" fill="#00C9A7" fill-opacity="0.1"/>
+          <path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="34" cy="26" r="2.5" fill="#F5A623"/>
+        </svg>
+        <div class="logo-wordmark">
+          <span class="logo-name" style="color:#fff;">Future Labs</span>
+          <span class="logo-tagline" style="color:#fff;">Software Technologies</span>
+        </div>
+      </div>
+      <span class="cell-note">Secondary dark background</span>
+    </div>
+  </div>
+
+  <!-- Mark sizes -->
+  <div class="mark-sizes">
+    <div class="mark-size-item">
+      <svg width="16" height="16" viewBox="0 0 56 56" fill="none"><path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="26" r="3" fill="#F5A623"/></svg>
+      <span class="mark-size-label">16px</span>
+    </div>
+    <div class="mark-size-item">
+      <svg width="24" height="24" viewBox="0 0 56 56" fill="none"><path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="26" r="3" fill="#F5A623"/></svg>
+      <span class="mark-size-label">24px</span>
+    </div>
+    <div class="mark-size-item">
+      <svg width="32" height="32" viewBox="0 0 56 56" fill="none"><path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="26" r="3" fill="#F5A623"/></svg>
+      <span class="mark-size-label">32px</span>
+    </div>
+    <div class="mark-size-item">
+      <svg width="48" height="48" viewBox="0 0 56 56" fill="none"><path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="26" r="3" fill="#F5A623"/></svg>
+      <span class="mark-size-label">48px</span>
+    </div>
+    <div class="mark-size-item">
+      <svg width="64" height="64" viewBox="0 0 56 56" fill="none"><path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="26" r="3" fill="#F5A623"/></svg>
+      <span class="mark-size-label">64px</span>
+    </div>
+    <div class="mark-size-item">
+      <svg width="96" height="96" viewBox="0 0 56 56" fill="none"><path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="26" r="3" fill="#F5A623"/></svg>
+      <span class="mark-size-label">96px</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── COLORS ─────────────────────────────────────────────── -->
+<div class="section">
+  <div class="section-label">02 — Color Palette</div>
+  <div class="color-grid">
+    <div class="color-swatch" style="background:#0A0A0F; color:#fff; aspect-ratio:unset; padding:32px 24px 24px;">
+      <span class="color-name">Void</span>
+      <span class="color-hex">#0A0A0F</span>
+      <span class="color-role">Primary dark</span>
+    </div>
+    <div class="color-swatch" style="background:#1A1A2E; color:#fff; aspect-ratio:unset; padding:32px 24px 24px;">
+      <span class="color-name">Deep Navy</span>
+      <span class="color-hex">#1A1A2E</span>
+      <span class="color-role">Secondary dark</span>
+    </div>
+    <div class="color-swatch" style="background:#00C9A7; color:#0A0A0F; aspect-ratio:unset; padding:32px 24px 24px;">
+      <span class="color-name">Circuit Teal</span>
+      <span class="color-hex">#00C9A7</span>
+      <span class="color-role">Primary brand</span>
+    </div>
+    <div class="color-swatch" style="background:#00896F; color:#fff; aspect-ratio:unset; padding:32px 24px 24px;">
+      <span class="color-name">Deep Teal</span>
+      <span class="color-hex">#00896F</span>
+      <span class="color-role">Teal on light bg</span>
+    </div>
+    <div class="color-swatch" style="background:#F5A623; color:#0A0A0F; aspect-ratio:unset; padding:32px 24px 24px;">
+      <span class="color-name">Amber Signal</span>
+      <span class="color-hex">#F5A623</span>
+      <span class="color-role">Accent / CTA</span>
+    </div>
+    <div class="color-swatch" style="background:#F7F7FA; color:#0A0A0F; border:1px solid #E5E7EB; aspect-ratio:unset; padding:32px 24px 24px;">
+      <span class="color-name">Paper</span>
+      <span class="color-hex">#F7F7FA</span>
+      <span class="color-role">Light surface</span>
+    </div>
+  </div>
+
+  <!-- Color usage guide -->
+  <div style="margin-top:40px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:var(--slate-light);">
+    <div style="background:var(--white); padding:24px 28px;">
+      <div style="font-size:11px; color:var(--slate); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:12px;">Do</div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+        <div style="width:28px; height:28px; border-radius:6px; background:#00C9A7;"></div>
+        <span style="font-size:13px;">Teal on dark backgrounds</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+        <div style="width:28px; height:28px; border-radius:6px; background:#F5A623;"></div>
+        <span style="font-size:13px;">Amber for single CTAs only</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:28px; height:28px; border-radius:6px; background:#00896F;"></div>
+        <span style="font-size:13px;">Deep teal on light surfaces</span>
+      </div>
+    </div>
+    <div style="background:var(--white); padding:24px 28px;">
+      <div style="font-size:11px; color:var(--slate); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:12px;">Don't</div>
+      <div style="font-size:13px; color:var(--slate); line-height:1.8;">
+        — Use teal and amber together in the same element<br>
+        — Use #00C9A7 on white (use #00896F instead)<br>
+        — Use more than 2 accent colors on one screen
+      </div>
+    </div>
+    <div style="background:var(--white); padding:24px 28px;">
+      <div style="font-size:11px; color:var(--slate); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:12px;">Meaning</div>
+      <div style="font-size:13px; color:var(--slate); line-height:1.8;">
+        Teal = Future Labs brand, technology, growth<br>
+        Amber = action, alert, important signal<br>
+        Void/Navy = authority, focus, night mode
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TYPOGRAPHY ─────────────────────────────────────────── -->
+<div class="section">
+  <div class="section-label">03 — Typography</div>
+
+  <!-- Display specimens -->
+  <div style="border:1px solid var(--slate-light); border-radius:4px; overflow:hidden; margin-bottom:32px;">
+    <div style="padding:48px; border-bottom:1px solid var(--slate-light);">
+      <div style="font-size:11px; color:var(--slate); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:20px;">Space Grotesk — Display / UI</div>
+      <div style="font-size:56px; font-weight:700; letter-spacing:-0.03em; line-height:1; color:var(--ink);">Building<br>the Future.</div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid var(--slate-light);">
+      <div style="padding:32px; border-right:1px solid var(--slate-light);">
+        <div style="font-size:11px; color:var(--slate); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px;">Heading — 700</div>
+        <div style="font-size:28px; font-weight:700; letter-spacing:-0.02em; color:var(--ink);">Future Labs ships<br>real software.</div>
+      </div>
+      <div style="padding:32px;">
+        <div style="font-size:11px; color:var(--slate); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px;">Subheading — 500</div>
+        <div style="font-size:18px; font-weight:500; color:var(--ink); line-height:1.5;">We build products for the African market, starting with Ethiopia.</div>
+      </div>
+    </div>
+    <div style="padding:32px; border-bottom:1px solid var(--slate-light);">
+      <div style="font-size:11px; color:var(--slate); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px;">Body — 400</div>
+      <div style="font-size:15px; color:var(--slate); line-height:1.7; max-width:560px;">Future Labs is a software and technology company building products that serve the Ethiopian and African market. Our first product, Dineflow, is a food ordering platform connecting restaurants and customers.</div>
+    </div>
+    <div style="padding:32px;">
+      <div style="font-size:11px; color:var(--slate); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px;">Space Mono — Code / Data / Technical</div>
+      <div style="font-family:'Space Mono', monospace; font-size:14px; color:var(--teal-deep); background:var(--surface); padding:16px 20px; border-radius:4px; display:inline-block;">
+        futurelabs.et · v1.0.0 · Hawassa, Ethiopia
+      </div>
+    </div>
+  </div>
+
+  <!-- Type scale -->
+  <div style="display:grid; grid-template-columns:120px 1fr; gap:0;">
+    <div style="padding:20px; font-size:11px; color:var(--slate); font-family:var(--font-mono); border-right:1px solid var(--slate-light); border-bottom:1px solid var(--slate-light);">72px / 700</div>
+    <div style="padding:20px; border-bottom:1px solid var(--slate-light); font-size:36px; font-weight:700; letter-spacing:-0.02em; color:var(--ink);">Display</div>
+    <div style="padding:20px; font-size:11px; color:var(--slate); font-family:var(--font-mono); border-right:1px solid var(--slate-light); border-bottom:1px solid var(--slate-light);">40px / 700</div>
+    <div style="padding:20px; border-bottom:1px solid var(--slate-light); font-size:28px; font-weight:700; color:var(--ink);">Hero Heading</div>
+    <div style="padding:20px; font-size:11px; color:var(--slate); font-family:var(--font-mono); border-right:1px solid var(--slate-light); border-bottom:1px solid var(--slate-light);">24px / 600</div>
+    <div style="padding:20px; border-bottom:1px solid var(--slate-light); font-size:20px; font-weight:600; color:var(--ink);">Section Heading</div>
+    <div style="padding:20px; font-size:11px; color:var(--slate); font-family:var(--font-mono); border-right:1px solid var(--slate-light); border-bottom:1px solid var(--slate-light);">16px / 400</div>
+    <div style="padding:20px; border-bottom:1px solid var(--slate-light); font-size:15px; color:var(--slate);">Body text — readable, comfortable line height for long paragraphs</div>
+    <div style="padding:20px; font-size:11px; color:var(--slate); font-family:var(--font-mono); border-right:1px solid var(--slate-light);">11px / 500</div>
+    <div style="padding:20px; font-size:11px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--slate);">Label / Caption / Eyebrow</div>
+  </div>
+</div>
+
+<!-- ── APP ICON ─────────────────────────────────────────────── -->
+<div class="section">
+  <div class="section-label">04 — App Icon & Favicon</div>
+  <div class="icon-grid">
+    <div class="mark-size-item">
+      <div class="app-icon" style="width:180px; height:180px;">
+        <svg width="96" height="96" viewBox="0 0 56 56" fill="none">
+          <path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="34" cy="26" r="3" fill="#F5A623"/>
+        </svg>
+      </div>
+      <span class="mark-size-label" style="color:var(--slate);">180×180 — iOS</span>
+    </div>
+    <div class="mark-size-item">
+      <div class="app-icon" style="width:108px; height:108px;">
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+          <path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="34" cy="26" r="3" fill="#F5A623"/>
+        </svg>
+      </div>
+      <span class="mark-size-label" style="color:var(--slate);">108×108 — Android</span>
+    </div>
+    <div class="mark-size-item">
+      <div class="app-icon" style="width:64px; height:64px; border-radius:8px;">
+        <svg width="32" height="32" viewBox="0 0 56 56" fill="none">
+          <path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="34" cy="26" r="3" fill="#F5A623"/>
+        </svg>
+      </div>
+      <span class="mark-size-label" style="color:var(--slate);">64×64 — Favicon</span>
+    </div>
+    <div class="mark-size-item">
+      <div class="app-icon" style="width:32px; height:32px; border-radius:4px;">
+        <svg width="18" height="18" viewBox="0 0 56 56" fill="none">
+          <path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="34" cy="26" r="3.5" fill="#F5A623"/>
+        </svg>
+      </div>
+      <span class="mark-size-label" style="color:var(--slate);">32×32 — Browser tab</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── USAGE ─────────────────────────────────────────────────── -->
+<div class="section">
+  <div class="section-label">05 — Real-World Usage</div>
+  <div class="usage-grid">
+
+    <!-- Business card -->
+    <div class="usage-card">
+      <div class="usage-card-top" style="background:var(--ink); flex-direction:column; align-items:flex-start; padding:48px;">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:auto;">
+          <svg width="32" height="32" viewBox="0 0 56 56" fill="none"><path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="26" r="3" fill="#F5A623"/></svg>
+          <span style="font-size:16px; font-weight:700; color:#fff;">Future Labs</span>
+        </div>
+        <div style="margin-top:48px;">
+          <div style="font-size:16px; font-weight:600; color:#fff;">Ahmed Rediwan</div>
+          <div style="font-size:12px; color:var(--teal); margin-top:4px;">Founder & CEO</div>
+          <div style="font-size:11px; color:#555; margin-top:16px; font-family:'Space Mono',monospace; line-height:1.8;">
+            ahmed@futurelabs.et<br>
+            futurelabs.et
+          </div>
+        </div>
+      </div>
+      <div class="usage-card-bottom">
+        <div class="dot"></div>
+        <p>Business card — dark side with teal mark and amber dot signature</p>
+      </div>
+    </div>
+
+    <!-- Email signature -->
+    <div class="usage-card">
+      <div class="usage-card-top" style="background:var(--white); flex-direction:column; align-items:flex-start; padding:48px; justify-content:center;">
+        <div class="sig-demo">
+          <div class="sig-name">Ahmed Rediwan</div>
+          <div class="sig-role">Founder & CEO · Future Labs</div>
+          <div class="sig-divider"></div>
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+            <svg width="18" height="18" viewBox="0 0 56 56" fill="none"><path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00896F" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 20 L34 42 L46 42" stroke="#00896F" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="26" r="3" fill="#F5A623"/></svg>
+            <span class="sig-company">Future Labs Software Technologies</span>
+          </div>
+          <div class="sig-contact">ahmed@futurelabs.et</div>
+          <div class="sig-contact">futurelabs.et · @futurelabset</div>
+        </div>
+      </div>
+      <div class="usage-card-bottom">
+        <div class="dot"></div>
+        <p>Email signature — clean, minimal, uses deep teal on white</p>
+      </div>
+    </div>
+
+    <!-- Social profile -->
+    <div class="usage-card">
+      <div class="usage-card-top" style="background:var(--surface); flex-direction:column; align-items:center; padding:40px; justify-content:center; gap:20px;">
+        <div style="width:80px; height:80px; border-radius:50%; background:var(--ink); display:flex; align-items:center; justify-content:center;">
+          <svg width="40" height="40" viewBox="0 0 56 56" fill="none"><path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="26" r="3" fill="#F5A623"/></svg>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-weight:700; font-size:16px;">Future Labs</div>
+          <div style="font-size:12px; color:var(--slate); margin-top:2px;">@futurelabset</div>
+          <div style="font-size:12px; color:var(--slate); margin-top:8px; line-height:1.5; max-width:200px;">Building software for Africa, starting with Ethiopia 🇪🇹</div>
+        </div>
+      </div>
+      <div class="usage-card-bottom">
+        <div class="dot"></div>
+        <p>Social media profile — mark centered in circle, handle @futurelabset</p>
+      </div>
+    </div>
+
+    <!-- Loading / Splash -->
+    <div class="usage-card">
+      <div class="usage-card-top" style="background:var(--ink); flex-direction:column; align-items:center; justify-content:center; gap:20px;">
+        <svg width="48" height="48" viewBox="0 0 56 56" fill="none">
+          <path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M34 20 L34 42 L46 42" stroke="#00C9A7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="34" cy="26" r="3" fill="#F5A623"/>
+        </svg>
+        <div style="text-align:center;">
+          <div style="font-size:20px; font-weight:700; color:#fff; letter-spacing:-0.02em;">Future Labs</div>
+          <div style="font-size:10px; color:#444; letter-spacing:0.16em; text-transform:uppercase; margin-top:4px;">Software Technologies</div>
+        </div>
+        <div style="width:40px; height:2px; background:var(--ink-mid); border-radius:2px; margin-top:8px; position:relative; overflow:hidden;">
+          <div style="position:absolute; left:0; top:0; height:100%; width:60%; background:var(--teal); border-radius:2px;"></div>
+        </div>
+      </div>
+      <div class="usage-card-bottom">
+        <div class="dot"></div>
+        <p>Splash / loading screen — mark + wordmark centered on dark background</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DESIGN TOKENS ──────────────────────────────────────────── -->
+<div class="section" style="background:var(--ink); color:var(--white);">
+  <div class="section-label" style="color:#333;">06 — Design Tokens (Copy into your code)</div>
+  <pre style="font-family:'Space Mono',monospace; font-size:12px; line-height:1.8; color:#00C9A7; overflow-x:auto;">
+<span style="color:#555;">/* Future Labs — Design Tokens */</span>
+
+<span style="color:#555;">/* Colors */</span>
+--fl-ink:         #0A0A0F;   <span style="color:#555;">/* primary dark */</span>
+--fl-navy:        #1A1A2E;   <span style="color:#555;">/* secondary dark */</span>
+--fl-teal:        #00C9A7;   <span style="color:#555;">/* brand teal — use on dark */</span>
+--fl-teal-deep:   #00896F;   <span style="color:#555;">/* brand teal — use on light */</span>
+--fl-amber:       #F5A623;   <span style="color:#555;">/* accent / CTA only */</span>
+--fl-surface:     #F7F7FA;   <span style="color:#555;">/* light background */</span>
+--fl-slate:       #6B7280;   <span style="color:#555;">/* secondary text */</span>
+--fl-border:      #E5E7EB;   <span style="color:#555;">/* dividers */</span>
+
+<span style="color:#555;">/* Typography */</span>
+--fl-font-display: 'Space Grotesk', sans-serif;
+--fl-font-mono:    'Space Mono', monospace;
+
+<span style="color:#555;">/* Spacing scale */</span>
+--fl-space-1:  4px;
+--fl-space-2:  8px;
+--fl-space-3:  12px;
+--fl-space-4:  16px;
+--fl-space-6:  24px;
+--fl-space-8:  32px;
+--fl-space-12: 48px;
+--fl-space-16: 64px;
+
+<span style="color:#555;">/* Border radius */</span>
+--fl-radius-sm:  4px;
+--fl-radius-md:  8px;
+--fl-radius-lg:  16px;
+--fl-radius-xl:  24px;</pre>
+</div>
+
+</body>
+</html>

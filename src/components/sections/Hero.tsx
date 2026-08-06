@@ -36,9 +36,9 @@ export function Hero() {
       ref={sectionRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden pointer-events-none"
     >
-      {/* Minimal gradient for text readability - let the 3D globe breathe */}
+      {/* Very subtle gradient — just enough to keep text legible, doesn't block the atom */}
       <div className="absolute inset-0 z-10 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/95" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-transparent to-background/80" />
       </div>
 
       {/* Content with parallax - perfectly centered */}
@@ -53,9 +53,12 @@ export function Hero() {
         <motion.div variants={itemVariants} className="mb-8">
           <Badge
             variant="outline"
-            className="border-primary/25 text-primary/90 px-5 py-2 text-sm rounded-full"
+            className="border-primary/20 px-5 py-2 text-sm rounded-full"
             style={{
-              boxShadow: '0 0 15px rgba(13,148,136,0.08)',
+              color: 'rgba(0,201,167,0.75)',
+              background: 'rgba(0,201,167,0.04)',
+              backdropFilter: 'blur(6px)',
+              boxShadow: '0 0 15px rgba(0,201,167,0.06)',
             }}
           >
             Technology Innovation Lab
@@ -65,22 +68,24 @@ export function Hero() {
         {/* Main headline */}
         <motion.h1
           variants={itemVariants}
-          className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight text-foreground leading-[1.08]"
+          className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-[1.08]"
           style={{
-            textShadow: '0 2px 20px rgba(0,0,0,0.5)',
+            color: 'rgba(250,250,250,0.72)',
+            textShadow: '0 2px 24px rgba(0,0,0,0.7), 0 0 60px rgba(0,0,0,0.4)',
           }}
         >
           Building the{' '}
-          <span className="text-primary" style={{ textShadow: '0 0 30px rgba(13,148,136,0.25)' }}>Future</span>{' '}
+          <span style={{ color: 'rgba(0,201,167,0.85)', textShadow: '0 0 30px rgba(0,201,167,0.3)' }}>Future</span>{' '}
           of{' '}
-          <span className="text-primary" style={{ textShadow: '0 0 30px rgba(13,148,136,0.25)' }}>Ethiopia</span>{' '}
+          <span style={{ color: 'rgba(0,201,167,0.85)', textShadow: '0 0 30px rgba(0,201,167,0.3)' }}>Ethiopia</span>{' '}
           Through Technology
         </motion.h1>
 
         {/* Subtitle */}
         <motion.p
           variants={itemVariants}
-          className="mt-7 text-lg md:text-xl text-muted-foreground/80 max-w-2xl leading-relaxed"
+          className="mt-7 text-lg md:text-xl max-w-2xl leading-relaxed"
+          style={{ color: 'rgba(161,161,170,0.65)' }}
         >
           We design, build, and deploy impactful technology products that
           accelerate Ethiopia&rsquo;s digital transformation.
@@ -93,20 +98,27 @@ export function Hero() {
         >
           <Button
             size="lg"
-            className="min-w-[200px] relative overflow-hidden group"
+            className="min-w-[200px] relative overflow-hidden group bg-[#F5A623]/80 hover:bg-[#F5A623]/95 text-[#0a0a0f]"
             onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
             style={{
-              boxShadow: '0 0 25px rgba(13,148,136,0.15), 0 4px 20px rgba(0,0,0,0.3)',
+              boxShadow: '0 0 25px rgba(245,166,35,0.15), 0 4px 20px rgba(0,0,0,0.25)',
+              backdropFilter: 'blur(4px)',
             }}
           >
-            <span className="relative z-10">Explore Our Work</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+            <span className="relative z-10 font-semibold">Explore Our Work</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
           </Button>
           <Button
             variant="outline"
             size="lg"
-            className="min-w-[200px] border-border/50"
+            className="min-w-[200px]"
             onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+            style={{
+              borderColor: 'rgba(255,255,255,0.12)',
+              color: 'rgba(250,250,250,0.65)',
+              background: 'rgba(255,255,255,0.03)',
+              backdropFilter: 'blur(6px)',
+            }}
           >
             Get in Touch
           </Button>
@@ -135,7 +147,7 @@ export function Hero() {
 
       {/* Bottom edge line - subtle */}
       <div className="absolute bottom-0 left-0 right-0 z-20 h-px" style={{
-        background: 'linear-gradient(90deg, transparent, rgba(13,148,136,0.2), rgba(13,148,136,0.4), rgba(13,148,136,0.2), transparent)',
+        background: 'linear-gradient(90deg, transparent, rgba(0,201,167,0.2), rgba(0,201,167,0.4), rgba(0,201,167,0.2), transparent)',
       }} />
     </section>
   )
