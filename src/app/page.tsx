@@ -9,17 +9,15 @@ import { Careers } from '@/components/sections/Careers';
 import { Contact } from '@/components/sections/Contact';
 import { Footer } from '@/components/sections/Footer';
 import { SolarSystemScene } from '@/components/SolarSystemScene';
-import { EthiopianCulturalOverlay } from '@/components/EthiopianCulturalOverlay';
 import { CustomCursor } from '@/components/CustomCursor';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col relative">
-      <SolarSystemScene />
-      <EthiopianCulturalOverlay />
+    <div className="min-h-screen flex flex-col relative bg-background text-foreground">
       <CustomCursor />
+      <SolarSystemScene />
       <Navigation />
-      <main className="flex-1 relative z-10">
+      <main className="flex-1 relative z-10 space-y-16 md:space-y-24">
         <Hero />
         <Stats />
         <About />

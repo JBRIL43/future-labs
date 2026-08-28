@@ -9,77 +9,33 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { TiltCard3D } from '@/components/TiltCard3D';
-import { FloatingShapes3D } from '@/components/FloatingShapes3D';
 
 const contactInfo = [
   {
     icon: Mail,
-    label: 'Email',
+    label: 'Email Us',
     value: 'info@futurelabs.et',
     href: 'mailto:info@futurelabs.et',
   },
   {
     icon: Phone,
-    label: 'Phone',
+    label: 'Call Us',
     value: '+251 922 871 082',
     href: 'tel:+251922871082',
   },
   {
     icon: MapPin,
-    label: 'Location',
+    label: 'Headquarters',
     value: 'Addis Ababa, Ethiopia',
     href: undefined,
   },
 ];
 
 const socialLinks = [
-  {
-    icon: Github,
-    href: 'https://github.com/futurelabs',
-    label: 'GitHub',
-  },
-  {
-    icon: Linkedin,
-    href: 'https://linkedin.com/company/futurelabs',
-    label: 'LinkedIn',
-  },
-  {
-    icon: Mail,
-    href: 'mailto:info@futurelabs.et',
-    label: 'Email',
-  },
+  { icon: Github, href: 'https://github.com/futurelabs', label: 'GitHub' },
+  { icon: Linkedin, href: 'https://linkedin.com/company/futurelabs', label: 'LinkedIn' },
+  { icon: Mail, href: 'mailto:info@futurelabs.et', label: 'Email' },
 ];
-
-const headerVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: 'easeOut' as const },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: 'easeOut' as const,
-      delay: i * 0.1,
-    },
-  }),
-};
-
-const formVariants = {
-  hidden: { opacity: 0, x: 30 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.6, ease: 'easeOut' as const, delay: 0.3 },
-  },
-};
 
 export function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -102,7 +58,6 @@ export function Contact() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
     setIsSubmitting(true);
 
     try {
@@ -117,15 +72,15 @@ export function Contact() {
       }
 
       toast({
-        title: 'Message sent!',
-        description: "Thank you for reaching out. We'll get back to you soon.",
+        title: 'Message sent successfully!',
+        description: 'Thank you for reaching out. We will respond shortly.',
       });
 
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch {
       toast({
-        title: 'Something went wrong',
-        description: 'Please try again later or email us directly at info@futurelabs.et.',
+        title: 'Submission error',
+        description: 'Failed to send message. Please email info@futurelabs.et directly.',
         variant: 'destructive',
       });
     } finally {
@@ -134,89 +89,54 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" ref={sectionRef} className="py-24 lg:py-32 grid-pattern section-3d relative">
-      <div className="absolute top-0 left-0 right-0 h-px tricolor-line" />
-      <FloatingShapes3D variant="subtle" />
+    <section id="contact" ref={sectionRef} className="py-24 lg:py-32 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16">
-          {/* Left column */}
-          <div>
-            <motion.p
-              variants={headerVariants}
-              initial="hidden"
-              animate={isInView ? 'visible' : 'hidden'}
-              className="text-primary uppercase tracking-widest text-sm font-medium"
-            >
-              Contact Us
-            </motion.p>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          {/* Left Column (5 cols) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-5"
+          >
+            <span className="text-primary font-medium text-sm tracking-widest uppercase block mb-3">
+              Get in Touch
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground leading-tight">
+              Let&apos;s Build Something <span className="accent-gradient">Great</span>
+            </h2>
+            <p className="mt-4 text-muted-foreground text-base leading-relaxed">
+              Have a project inquiry, partnership proposal, or want to join our lab? Reach out and our team will get back to you within 24 hours.
+            </p>
 
-            <motion.h2
-              variants={headerVariants}
-              initial="hidden"
-              animate={isInView ? 'visible' : 'hidden'}
-              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
-              className="text-3xl md:text-4xl font-bold mt-3"
-            >
-              Let&apos;s Build Something{' '}
-              <span className="gradient-text">Extraordinary</span>
-            </motion.h2>
-
-            <motion.p
-              variants={headerVariants}
-              initial="hidden"
-              animate={isInView ? 'visible' : 'hidden'}
-              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
-              className="text-muted-foreground mt-4 text-lg leading-relaxed"
-            >
-              Ready to bring your vision to life? Whether you have a project idea,
-              a question about our services, or just want to say hello — we&apos;d
-              love to hear from you.
-            </motion.p>
-
-            {/* Contact info cards */}
+            {/* Contact Info Bento Cards */}
             <div className="mt-8 space-y-4">
-              {contactInfo.map((item, index) => {
-                const IconComp = item.icon;
-                const content = (
-                  <TiltCard3D key={item.label} className="glass rounded-xl p-4" tiltDegree={8}>
-                    <motion.div
-                      custom={index}
-                      variants={cardVariants}
-                      initial="hidden"
-                      animate={isInView ? 'visible' : 'hidden'}
-                      className="flex items-center gap-4 transition-all duration-300"
-                    >
-                      <div className="bg-primary/10 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <IconComp className="text-primary w-5 h-5" />
+              {contactInfo.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <TiltCard3D key={item.label} className="p-5">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                        <Icon className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-muted-foreground text-sm">{item.label}</p>
-                        <p className="text-foreground font-medium">{item.value}</p>
+                        <span className="text-xs text-muted-foreground block">{item.label}</span>
+                        {item.href ? (
+                          <a href={item.href} className="text-sm font-medium text-foreground hover:text-primary transition-colors">
+                            {item.value}
+                          </a>
+                        ) : (
+                          <span className="text-sm font-medium text-foreground">{item.value}</span>
+                        )}
                       </div>
-                    </motion.div>
+                    </div>
                   </TiltCard3D>
                 );
-
-                if (item.href) {
-                  return (
-                    <a key={item.label} href={item.href} className="block">
-                      {content}
-                    </a>
-                  );
-                }
-
-                return <div key={item.label}>{content}</div>;
               })}
             </div>
 
-            {/* Social media links */}
-            <motion.div
-              variants={headerVariants}
-              initial="hidden"
-              animate={isInView ? 'visible' : 'hidden'}
-              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.5 }}
-              className="mt-8 flex items-center gap-3"
-            >
+            {/* Social Links */}
+            <div className="mt-8 flex items-center gap-3">
               {socialLinks.map((social) => {
                 const SocialIcon = social.icon;
                 return (
@@ -226,101 +146,97 @@ export function Contact() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={social.label}
-                    className="glass rounded-full p-2.5 hover:border-primary/20 transition-all duration-300"
+                    className="w-10 h-10 rounded-full bg-secondary border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
                   >
-                    <SocialIcon className="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors" />
+                    <SocialIcon className="w-4 h-4" />
                   </a>
                 );
               })}
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
 
-          {/* Right column — Contact form */}
+          {/* Right Column — Contact Form Bento Card (7 cols) */}
           <motion.div
-            variants={formVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="lg:col-span-7"
           >
-            <TiltCard3D className="glass rounded-2xl p-6 lg:p-8" tiltDegree={4} scaleOnHover={1.005}>
-            <form
-              onSubmit={handleSubmit}
-            >
-              <div className="space-y-5">
-                {/* Name field */}
-                <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    placeholder="Your full name"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                  />
+            <TiltCard3D className="p-8 sm:p-10">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-xs font-semibold uppercase text-muted-foreground">Name</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      placeholder="Your full name"
+                      required
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="bg-secondary/40 border-border focus:border-primary rounded-xl h-11"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-xs font-semibold uppercase text-muted-foreground">Email</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="you@example.com"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="bg-secondary/40 border-border focus:border-primary rounded-xl h-11"
+                    />
+                  </div>
                 </div>
 
-                {/* Email field */}
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="you@example.com"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                {/* Subject field */}
-                <div className="space-y-2">
-                  <Label htmlFor="subject">Subject</Label>
+                  <Label htmlFor="subject" className="text-xs font-semibold uppercase text-muted-foreground">Subject</Label>
                   <Input
                     id="subject"
                     name="subject"
-                    placeholder="How can we help?"
+                    placeholder="Project Inquiry / Partnership"
                     required
                     value={formData.subject}
                     onChange={handleChange}
+                    className="bg-secondary/40 border-border focus:border-primary rounded-xl h-11"
                   />
                 </div>
 
-                {/* Message field */}
                 <div className="space-y-2">
-                  <Label htmlFor="message">Message</Label>
+                  <Label htmlFor="message" className="text-xs font-semibold uppercase text-muted-foreground">Message</Label>
                   <Textarea
                     id="message"
                     name="message"
-                    placeholder="Tell us about your project or idea..."
+                    placeholder="Tell us about your project requirements..."
                     rows={5}
                     required
                     value={formData.message}
                     onChange={handleChange}
+                    className="bg-secondary/40 border-border focus:border-primary rounded-xl"
                   />
                 </div>
 
-                {/* Submit button */}
                 <Button
                   type="submit"
-                  className="w-full"
                   disabled={isSubmitting}
-                  style={{ boxShadow: '0 0 25px rgba(0,201,167,0.2), 0 4px 15px rgba(0,0,0,0.3)' }}
+                  className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 font-medium rounded-full transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
                 >
                   {isSubmitting ? (
-                    <>
+                    <span className="flex items-center justify-center gap-2">
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Sending...
-                    </>
+                      Sending Message...
+                    </span>
                   ) : (
-                    <>
+                    <span className="flex items-center justify-center gap-2">
                       <Send className="w-4 h-4" />
                       Send Message
-                    </>
+                    </span>
                   )}
                 </Button>
-              </div>
-            </form>
+              </form>
             </TiltCard3D>
           </motion.div>
         </div>
