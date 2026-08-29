@@ -25,7 +25,7 @@ export const PRODUCTS: Product[] = [
     tagline: 'AI Food Ordering & Delivery',
     category: 'Logistics & E-Commerce',
     description: 'An intelligent food ordering and fulfillment ecosystem connecting merchants, logistics fleets, and consumers through automated dispatching and AI recommendation engines.',
-    image: '/dayn-flow.png',
+    image: '/dayn-flow.jpg',
     logo: '/daynflow.png',
     accentColor: '#F5A623',
     badgeText: 'Flagship Platform',
