@@ -13,6 +13,7 @@ export function CustomCursor() {
 
   useEffect(() => {
     if (typeof window === 'undefined' || window.matchMedia('(pointer: coarse)').matches) return
+    document.body.style.cursor = 'default'
 
     const onMove = (e: MouseEvent) => {
       mousePos.current.x = e.clientX

@@ -3,7 +3,6 @@ import { Hero } from '@/components/sections/Hero';
 import { About } from '@/components/sections/About';
 import { Services } from '@/components/sections/Services';
 import { Products } from '@/components/sections/Products';
-import { Stats } from '@/components/sections/Stats';
 import { TechStack } from '@/components/sections/TechStack';
 import { Careers } from '@/components/sections/Careers';
 import { Contact } from '@/components/sections/Contact';
@@ -19,7 +18,6 @@ export default function Home() {
       <Navigation />
       <main className="flex-1 relative z-10 space-y-16 md:space-y-24">
         <Hero />
-        <Stats />
         <About />
         <Services />
         <Products />

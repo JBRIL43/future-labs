@@ -113,7 +113,7 @@ export function Products() {
                   <div className="flex flex-col sm:flex-row items-center gap-4">
                     <Button
                       size="lg"
-                      className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] group"
+                      className="w-full sm:w-auto bg-[#F5A623] text-primary-foreground hover:bg-[#F5A623]/90 rounded-full font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] group"
                       onClick={() => {
                         const target = document.getElementById('contact');
                         if (target) target.scrollIntoView({ behavior: 'smooth' });
@@ -127,10 +127,10 @@ export function Products() {
                       asChild
                       variant="outline"
                       size="lg"
-                      className="w-full sm:w-auto border-border bg-secondary/40 hover:bg-secondary text-foreground rounded-full font-medium"
+                      className="w-full sm:w-auto border-border bg-[#F5A623]/40 hover:scale-104 hover:text-white rounded-full font-medium cursor-default"
                     >
                       <Link href="/products">
-                        <Layers className="w-4 h-4 mr-2 text-primary" />
+                        <Layers className="w-4 h-4 mr-2 text-[#F5A623]" />
                         View Other Products ({otherProductsCount})
                       </Link>
                     </Button>
