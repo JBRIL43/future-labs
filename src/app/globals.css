@@ -92,19 +92,21 @@
   html {
     scroll-behavior: smooth;
     color-scheme: dark;
+    cursor: default;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    cursor: default;
+  }
+  a, button, [role="button"], input[type="submit"], input[type="button"], select {
+    cursor: pointer;
+  }
+  input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="search"], textarea {
+    cursor: text;
   }
   main, header, footer, section, nav {
     position: relative;
     z-index: 1;
-  }
-}
-
-@media (pointer: fine) {
-  * {
-    cursor: none !important;
   }
 }
 

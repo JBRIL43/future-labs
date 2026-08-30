@@ -37,8 +37,8 @@ export const PRODUCTS: Product[] = [
       'Integrated Digital Payments',
       'Multi-tenant Cloud Ecosystem',
     ],
-    ctaText: 'Explore Dayn Flow',
-    ctaHref: '#contact',
+    ctaText: 'Explore Dine Flow',
+    ctaHref: 'https://www.dineflow.et/',
     orbit: {
       speed: 0.38,
       startAngle: 0,

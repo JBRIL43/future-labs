@@ -1,22 +1,22 @@
-'use client'
+"use client";
 
-import { useRef } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { motion, useInView } from 'framer-motion'
-import { Check, ArrowRight, Layers } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { TiltCard3D } from '@/components/TiltCard3D'
-import { PRODUCTS } from '@/lib/products'
+import { useRef } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { motion, useInView } from "framer-motion";
+import { Check, ArrowRight, Layers } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { TiltCard3D } from "@/components/TiltCard3D";
+import { PRODUCTS } from "@/lib/products";
 
 export function Products() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const isInView = useInView(sectionRef, { once: true, margin: '-100px' })
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   // Dayn Flow (Flagship Product) shown full-size on the homepage
-  const flagshipProduct = PRODUCTS[0] // Dayn Flow
-  const otherProductsCount = PRODUCTS.length - 1
+  const flagshipProduct = PRODUCTS[0]; // Dayn Flow
+  const otherProductsCount = PRODUCTS.length - 1;
 
   return (
     <section id="products" ref={sectionRef} className="py-24 lg:py-32 relative">
@@ -32,10 +32,12 @@ export function Products() {
             Flagship Product Showcase
           </span>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
-            Digital Platforms Built for <span className="accent-gradient">Scale</span>
+            Digital Platforms Built for{" "}
+            <span className="accent-gradient">Scale</span>
           </h2>
           <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-            High-impact software engineering powering next-generation commerce and logistics in East Africa.
+            High-impact software engineering powering next-generation commerce
+            and logistics in East Africa.
           </p>
         </motion.div>
 
@@ -73,13 +75,20 @@ export function Products() {
                     >
                       {flagshipProduct.badgeText}
                     </Badge>
-                    <span className="text-xs text-muted-foreground font-mono">{flagshipProduct.category}</span>
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {flagshipProduct.category}
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-3 mb-2">
                     {flagshipProduct.logo && (
                       <div className="w-10 h-10 relative shrink-0 rounded-xl overflow-hidden bg-background/60 border border-white/10 p-1 flex items-center justify-center">
-                        <Image src={flagshipProduct.logo} alt={`${flagshipProduct.name} logo`} fill className="object-contain" />
+                        <Image
+                          src={flagshipProduct.logo}
+                          alt={`${flagshipProduct.name} logo`}
+                          fill
+                          className="object-contain"
+                        />
                       </div>
                     )}
                     <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground tracking-tight">
@@ -87,10 +96,13 @@ export function Products() {
                     </h3>
                   </div>
 
-                  <p className="font-medium text-base sm:text-lg mb-4" style={{ color: flagshipProduct.accentColor }}>
+                  <p
+                    className="font-medium text-base sm:text-lg mb-4"
+                    style={{ color: flagshipProduct.accentColor }}
+                  >
                     {flagshipProduct.tagline}
                   </p>
-                  
+
                   <p className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-8">
                     {flagshipProduct.description}
                   </p>
@@ -101,33 +113,45 @@ export function Products() {
                       <div key={feature} className="flex items-start gap-2.5">
                         <div
                           className="w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                          style={{ backgroundColor: `${flagshipProduct.accentColor}20`, border: `1px solid ${flagshipProduct.accentColor}40` }}
+                          style={{
+                            backgroundColor: `${flagshipProduct.accentColor}20`,
+                            border: `1px solid ${flagshipProduct.accentColor}40`,
+                          }}
                         >
-                          <Check className="w-2.5 h-2.5" style={{ color: flagshipProduct.accentColor }} />
+                          <Check
+                            className="w-2.5 h-2.5"
+                            style={{ color: flagshipProduct.accentColor }}
+                          />
                         </div>
-                        <span className="text-xs sm:text-sm text-foreground/90 font-medium">{feature}</span>
+                        <span className="text-xs sm:text-sm text-foreground/90 font-medium">
+                          {feature}
+                        </span>
                       </div>
                     ))}
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-center gap-4">
                     <Button
+                      asChild
                       size="lg"
                       className="w-full sm:w-auto bg-[#F5A623] text-primary-foreground hover:bg-[#F5A623]/90 rounded-full font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] group"
-                      onClick={() => {
-                        const target = document.getElementById('contact');
-                        if (target) target.scrollIntoView({ behavior: 'smooth' });
-                      }}
                     >
-                      {flagshipProduct.ctaText || `Inquire About ${flagshipProduct.name}`}
-                      <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-200 group-hover:translate-x-1" />
+                      <Link
+                        href="https://www.dineflow.et/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {flagshipProduct.ctaText ||
+                          `Inquire About ${flagshipProduct.name}`}
+                        <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-200 group-hover:translate-x-1" />
+                      </Link>
                     </Button>
 
                     <Button
                       asChild
                       variant="outline"
                       size="lg"
-                      className="w-full sm:w-auto border-border bg-[#F5A623]/40 hover:scale-104 hover:text-white rounded-full font-medium cursor-default"
+                      className="w-full sm:w-auto border-border bg-[#F5A623]/40 hover:scale-104 hover:text-white rounded-full font-medium"
                     >
                       <Link href="/products">
                         <Layers className="w-4 h-4 mr-2 text-[#F5A623]" />
@@ -150,9 +174,12 @@ export function Products() {
         >
           <div className="bento-card p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 max-w-4xl mx-auto">
             <div className="text-center sm:text-left">
-              <h4 className="text-lg font-bold text-foreground">Looking for our complete suite of platforms?</h4>
+              <h4 className="text-lg font-bold text-foreground">
+                Looking for our complete suite of platforms?
+              </h4>
               <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                Explore FinCore Pay, HealthPulse AI, AgriFlow AI, and custom solution architectures.
+                Explore FinCore Pay, HealthPulse AI, AgriFlow AI, and custom
+                solution architectures.
               </p>
             </div>
             <Button
@@ -168,5 +195,5 @@ export function Products() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

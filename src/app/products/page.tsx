@@ -167,14 +167,18 @@ export default function AllProductsPage() {
                         </div>
 
                         <Button
+                          asChild
                           size="lg"
                           className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] group"
-                          onClick={() => {
-                            window.location.href = '/#contact'
-                          }}
                         >
-                          {product.ctaText || `Inquire About ${product.name}`}
-                          <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-200 group-hover:translate-x-1" />
+                          <Link
+                            href={product.ctaHref || '/#contact'}
+                            target={product.ctaHref?.startsWith('http') ? '_blank' : undefined}
+                            rel={product.ctaHref?.startsWith('http') ? 'noopener noreferrer' : undefined}
+                          >
+                            {product.ctaText || `Inquire About ${product.name}`}
+                            <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-200 group-hover:translate-x-1" />
+                          </Link>
                         </Button>
                       </div>
                     </div>
