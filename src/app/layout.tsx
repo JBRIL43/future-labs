@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Work_Sans } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
-import { PageBackground } from "@/components/PageBackground";
 
-const inter = Inter({
+const workSans = Work_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-work-sans",
   display: "swap",
 });
 
@@ -56,13 +54,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${inter.className} antialiased bg-background text-foreground selection:bg-primary/20 selection:text-primary`}
+        className={`${workSans.variable} ${workSans.className} antialiased bg-background text-foreground`}
       >
-        <PageBackground />
         {children}
-        <Toaster />
       </body>
     </html>
   );
