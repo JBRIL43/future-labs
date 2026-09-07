@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Future Labs" }],
   icons: {
-    icon: "/fl-logo.png",
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
   },
   openGraph: {
     title: "Future Labs | Building the Future of Ethiopia Through Technology",
