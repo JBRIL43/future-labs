@@ -9,6 +9,7 @@ const workSans = Work_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.futurelabs.et"),
   title: "Future Labs | Building the Future of Ethiopia Through Technology",
   description:
     "Future Labs is a technology innovation company focused on shaping the future of Ethiopia through cutting-edge digital solutions including AI, Blockchain, Cloud Computing, and SaaS platforms.",
@@ -45,6 +46,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Future Labs",
     description: "Building the Future of Ethiopia Through Technology",
+    images: ["/hero-bg.png"],
   },
 };
 
