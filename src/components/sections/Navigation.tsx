@@ -1,25 +1,14 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { Menu } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetClose,
-} from '@/components/ui/sheet';
-import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { LogoMark, MenuIcon, CloseIcon } from '@/components/icons';
 
 const NAV_ITEMS = [
   { label: 'Home', href: '#home' },
   { label: 'About', href: '#about' },
   { label: 'Services', href: '#services' },
   { label: 'Products', href: '#products' },
-  { label: 'Tech Stack', href: '#tech-stack' },
   { label: 'Careers', href: '#careers' },
   { label: 'Contact', href: '#contact' },
 ] as const;
@@ -31,25 +20,14 @@ function getSectionId(href: string): string {
 export function Navigation() {
   const [activeSection, setActiveSection] = useState<string>('home');
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   const scrollToSection = useCallback((href: string) => {
-    const id = getSectionId(href);
-    const el = document.getElementById(id);
+    const el = document.getElementById(getSectionId(href));
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // IntersectionObserver scroll spy
   useEffect(() => {
     const sectionIds = NAV_ITEMS.map((item) => getSectionId(item.href));
 
@@ -86,42 +64,29 @@ export function Navigation() {
   );
 
   return (
-    <motion.header
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className={cn(
-        'sticky top-0 z-50 w-full transition-all duration-200 border-b',
-        scrolled
-          ? 'bg-background/80 backdrop-blur-xl border-border/80 shadow-sm'
-          : 'bg-background/40 backdrop-blur-md border-transparent'
-      )}
-    >
+    <header className="sticky top-0 z-50 w-full bg-white/70 backdrop-blur-md border-b border-border shadow-sm">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand Logo */}
         <a
           href="#home"
           onClick={(e) => {
             e.preventDefault();
             handleNavClick('#home');
           }}
-          className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg p-1"
-          aria-label="Future Labs - Go to top"
+          className="flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md p-1 transition-all duration-150 ease-in-out hover:text-primary active:scale-95"
+          aria-label="Future Labs, go to top"
         >
-          <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-hover:bg-primary/20">
-            <svg width="20" height="20" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M34 20 L34 42 L46 42" stroke="#00C9A7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+          <div className="w-8 h-8 rounded-md border border-border bg-card shadow-sm flex items-center justify-center">
+            <LogoMark width={18} height={18} />
           </div>
           <div className="flex flex-col leading-tight">
-            <span className="text-white text-base font-semibold tracking-tight">Future Labs</span>
-            <span className="text-[10px] font-medium tracking-wider uppercase text-muted-foreground">Software Technologies</span>
+            <span className="text-foreground text-base font-semibold tracking-tight">Future Labs</span>
+            <span className="text-[10px] font-medium tracking-wider uppercase text-muted-foreground">
+              Software Technologies
+            </span>
           </div>
         </a>
 
-        {/* Desktop Navigation Links */}
-        <ul className="hidden lg:flex items-center gap-1 bg-secondary/40 border border-border/60 p-1.5 rounded-full" role="menubar">
+        <ul className="hidden lg:flex items-center gap-1" role="menubar">
           {NAV_ITEMS.map((item) => {
             const sectionId = getSectionId(item.href);
             const isActive = activeSection === sectionId;
@@ -134,12 +99,11 @@ export function Navigation() {
                     e.preventDefault();
                     scrollToSection(item.href);
                   }}
-                  className={cn(
-                    'relative px-4 py-1.5 text-xs font-medium transition-all duration-200 rounded-full inline-block',
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-150 ease-in-out active:scale-95 ${
                     isActive
-                      ? 'text-foreground bg-primary/15 font-semibold border border-primary/20 shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
-                  )}
+                      ? 'text-primary bg-secondary border border-border shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary border border-transparent'
+                  }`}
                   aria-current={isActive ? 'page' : undefined}
                 >
                   {item.label}
@@ -149,81 +113,66 @@ export function Navigation() {
           })}
         </ul>
 
-        {/* Desktop CTA & Mobile Toggle */}
-        <div className="flex items-center gap-3">
-          <Button
-            size="sm"
-            className="hidden lg:inline-flex bg-primary text-primary-foreground hover:bg-primary/90 font-medium rounded-full px-5 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
-            onClick={() => scrollToSection('#contact')}
+        <div className="flex items-center gap-2">
+          <a
+            href="#contact"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToSection('#contact');
+            }}
+            className="hidden lg:inline-flex btn-primary px-4 py-2 text-sm"
           >
             Get Started
-          </Button>
+          </a>
 
-          {/* Mobile Navigation Trigger */}
-          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden text-foreground hover:bg-secondary rounded-full"
-                aria-label="Open menu"
-              >
-                <Menu className="size-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-80 bg-background/95 backdrop-blur-2xl border-border p-6">
-              <SheetHeader className="pb-6 border-b border-border">
-                <SheetTitle className="flex items-center gap-3 text-white">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
-                    <svg width="18" height="18" viewBox="0 0 56 56" fill="none">
-                      <path d="M14 14 L14 42 M14 14 L32 14 M14 26 L26 26" stroke="#00C9A7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M34 20 L34 42 L46 42" stroke="#00C9A7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <span className="font-semibold text-lg">Future Labs</span>
-                </SheetTitle>
-              </SheetHeader>
-
-              <nav className="flex flex-col gap-2 mt-6">
-                {NAV_ITEMS.map((item) => {
-                  const sectionId = getSectionId(item.href);
-                  const isActive = activeSection === sectionId;
-                  return (
-                    <SheetClose asChild key={item.href}>
-                      <a
-                        href={item.href}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleNavClick(item.href);
-                        }}
-                        className={cn(
-                          'px-4 py-3 text-sm font-medium rounded-xl transition-colors',
-                          isActive
-                            ? 'bg-primary/10 text-primary font-semibold'
-                            : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
-                        )}
-                      >
-                        {item.label}
-                      </a>
-                    </SheetClose>
-                  );
-                })}
-              </nav>
-
-              <div className="mt-8 pt-6 border-t border-border">
-                <SheetClose asChild>
-                  <Button
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
-                    onClick={() => handleNavClick('#contact')}
-                  >
-                    Get Started
-                  </Button>
-                </SheetClose>
-              </div>
-            </SheetContent>
-          </Sheet>
+          <button
+            type="button"
+            onClick={() => setMobileOpen((v) => !v)}
+            className="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-border bg-card shadow-sm text-foreground transition-all duration-150 ease-in-out hover:border-primary hover:text-primary active:scale-95"
+            aria-expanded={mobileOpen}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          >
+            {mobileOpen ? <CloseIcon width={18} height={18} /> : <MenuIcon width={18} height={18} />}
+          </button>
         </div>
       </nav>
-    </motion.header>
+
+      {mobileOpen && (
+        <div className="lg:hidden border-t border-border bg-card shadow-[0_16px_40px_rgba(24,24,27,0.06)]">
+          <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col gap-1">
+            {NAV_ITEMS.map((item) => {
+              const isActive = activeSection === getSectionId(item.href);
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick(item.href);
+                  }}
+                  className={`px-3 py-2.5 text-sm font-medium rounded-md transition-all duration-150 ease-in-out active:scale-95 ${
+                    isActive
+                      ? 'bg-secondary text-primary border border-border shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary border border-transparent'
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
+            <a
+              href="#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavClick('#contact');
+              }}
+              className="btn-primary px-4 py-2.5 text-sm mt-2"
+            >
+              Get Started
+            </a>
+          </nav>
+        </div>
+      )}
+    </header>
   );
 }

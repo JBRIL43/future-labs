@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Work_Sans } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
-import { PageBackground } from "@/components/PageBackground";
 
-const inter = Inter({
+const workSans = Work_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-work-sans",
   display: "swap",
 });
 
@@ -29,7 +27,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Future Labs" }],
   icons: {
-    icon: "/fl-logo.png",
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
   },
   openGraph: {
     title: "Future Labs | Building the Future of Ethiopia Through Technology",
@@ -58,13 +56,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${inter.className} antialiased bg-background text-foreground selection:bg-primary/20 selection:text-primary`}
+        className={`${workSans.variable} ${workSans.className} antialiased bg-background text-foreground`}
       >
-        <PageBackground />
         {children}
-        <Toaster />
       </body>
     </html>
   );

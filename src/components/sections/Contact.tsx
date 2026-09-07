@@ -1,64 +1,56 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
-import { useRef, useState, type FormEvent } from 'react';
-import { Mail, Phone, MapPin, Send, Loader2, Github, Linkedin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-import { TiltCard3D } from '@/components/TiltCard3D';
+import { useState, type FormEvent } from 'react';
+import {
+  MailIcon,
+  PhoneIcon,
+  MapPinIcon,
+  GithubIcon,
+  LinkedinIcon,
+} from '@/components/icons';
 
 const contactInfo = [
   {
-    icon: Mail,
-    label: 'Email Us',
+    label: 'Email',
     value: 'info@futurelabs.et',
     href: 'mailto:info@futurelabs.et',
+    icon: MailIcon,
   },
   {
-    icon: Phone,
-    label: 'Call Us',
+    label: 'Phone',
     value: '+251 922 871 082',
     href: 'tel:+251922871082',
+    icon: PhoneIcon,
   },
   {
-    icon: MapPin,
     label: 'Headquarters',
     value: 'Addis Ababa, Ethiopia',
     href: undefined,
+    icon: MapPinIcon,
   },
 ];
 
 const socialLinks = [
-  { icon: Github, href: 'https://github.com/futurelabs', label: 'GitHub' },
-  { icon: Linkedin, href: 'https://linkedin.com/company/futurelabs', label: 'LinkedIn' },
-  { icon: Mail, href: 'mailto:info@futurelabs.et', label: 'Email' },
+  { href: 'https://github.com/futurelabs', label: 'GitHub', icon: GithubIcon },
+  { href: 'https://linkedin.com/company/futurelabs', label: 'LinkedIn', icon: LinkedinIcon },
 ];
 
+type FormStatus = 'idle' | 'submitting' | 'success' | 'error';
+
 export function Contact() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
-  const { toast } = useToast();
+  const [status, setStatus] = useState<FormStatus>('idle');
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    const form = e.currentTarget;
+    const formData = {
+      name: (form.elements.namedItem('name') as HTMLInputElement).value,
+      email: (form.elements.namedItem('email') as HTMLInputElement).value,
+      subject: (form.elements.namedItem('subject') as HTMLInputElement).value,
+      message: (form.elements.namedItem('message') as HTMLTextAreaElement).value,
+    };
+
+    setStatus('submitting');
 
     try {
       const res = await fetch('/api/contact', {
@@ -71,71 +63,55 @@ export function Contact() {
         throw new Error('Failed to send message');
       }
 
-      toast({
-        title: 'Message sent successfully!',
-        description: 'Thank you for reaching out. We will respond shortly.',
-      });
-
-      setFormData({ name: '', email: '', subject: '', message: '' });
+      setStatus('success');
+      form.reset();
     } catch {
-      toast({
-        title: 'Submission error',
-        description: 'Failed to send message. Please email info@futurelabs.et directly.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
+      setStatus('error');
     }
   };
 
   return (
-    <section id="contact" ref={sectionRef} className="py-24 lg:py-32 relative">
+    <section id="contact" className="bg-card py-24 lg:py-32 border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Left Column (5 cols) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5 }}
-            className="lg:col-span-5"
-          >
-            <span className="text-primary font-medium text-sm tracking-widest uppercase block mb-3">
+          <div className="lg:col-span-5">
+            <p className="label-caps text-primary mb-3">
               Get in Touch
-            </span>
+            </p>
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground leading-tight">
-              Let&apos;s Build Something <span className="accent-gradient">Great</span>
+              Let&apos;s Build Something Great
             </h2>
-            <p className="mt-4 text-muted-foreground text-base leading-relaxed">
-              Have a project inquiry, partnership proposal, or want to join our lab? Reach out and our team will get back to you within 24 hours.
+            <p className="mt-4 text-muted-foreground leading-relaxed">
+              Have a project inquiry, partnership proposal, or want to join our lab?
+              Reach out and our team will get back to you within 24 hours.
             </p>
 
-            {/* Contact Info Bento Cards */}
-            <div className="mt-8 space-y-4">
+            <ul className="mt-8 border-t border-border">
               {contactInfo.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <TiltCard3D key={item.label} className="p-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                        <Icon className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <span className="text-xs text-muted-foreground block">{item.label}</span>
-                        {item.href ? (
-                          <a href={item.href} className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-                            {item.value}
-                          </a>
-                        ) : (
-                          <span className="text-sm font-medium text-foreground">{item.value}</span>
-                        )}
-                      </div>
+                  <li key={item.label} className="flex items-center gap-4 py-4 border-b border-border">
+                    <span className="text-primary shrink-0">
+                      <Icon className="w-5 h-5" />
+                    </span>
+                    <div>
+                      <span className="text-xs text-muted-foreground block">{item.label}</span>
+                      {item.href ? (
+                        <a
+                          href={item.href}
+                          className="text-sm font-medium text-foreground hover:text-primary"
+                        >
+                          {item.value}
+                        </a>
+                      ) : (
+                        <span className="text-sm font-medium text-foreground">{item.value}</span>
+                      )}
                     </div>
-                  </TiltCard3D>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
 
-            {/* Social Links */}
             <div className="mt-8 flex items-center gap-3">
               {socialLinks.map((social) => {
                 const SocialIcon = social.icon;
@@ -146,99 +122,97 @@ export function Contact() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={social.label}
-                    className="w-10 h-10 rounded-full bg-secondary border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
+                    className="w-9 h-9 rounded-md border border-border bg-card shadow-sm flex items-center justify-center text-muted-foreground transition-all duration-150 ease-in-out hover:-translate-y-0.5 hover:text-primary hover:border-primary hover:shadow-md active:scale-95"
                   >
                     <SocialIcon className="w-4 h-4" />
                   </a>
                 );
               })}
             </div>
-          </motion.div>
+          </div>
 
-          {/* Right Column — Contact Form Bento Card (7 cols) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="lg:col-span-7"
-          >
-            <TiltCard3D className="p-8 sm:p-10">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-xs font-semibold uppercase text-muted-foreground">Name</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      placeholder="Your full name"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="bg-secondary/40 border-border focus:border-primary rounded-xl h-11"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-xs font-semibold uppercase text-muted-foreground">Email</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="bg-secondary/40 border-border focus:border-primary rounded-xl h-11"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="subject" className="text-xs font-semibold uppercase text-muted-foreground">Subject</Label>
-                  <Input
-                    id="subject"
-                    name="subject"
-                    placeholder="Project Inquiry / Partnership"
+          <div className="lg:col-span-7">
+            <form onSubmit={handleSubmit} className="card-interactive p-8 sm:p-10 space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="name" className="label-caps text-muted-foreground block mb-2">
+                    Name
+                  </label>
+                  <input
+                    id="name"
+                    name="name"
+                    placeholder="Your full name"
                     required
-                    value={formData.subject}
-                    onChange={handleChange}
-                    className="bg-secondary/40 border-border focus:border-primary rounded-xl h-11"
+                    minLength={2}
+                    className="field-input"
                   />
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="message" className="text-xs font-semibold uppercase text-muted-foreground">Message</Label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    placeholder="Tell us about your project requirements..."
-                    rows={5}
+                <div>
+                  <label htmlFor="email" className="label-caps text-muted-foreground block mb-2">
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="you@example.com"
                     required
-                    value={formData.message}
-                    onChange={handleChange}
-                    className="bg-secondary/40 border-border focus:border-primary rounded-xl"
+                    className="field-input"
                   />
                 </div>
+              </div>
 
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 font-medium rounded-full transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Sending Message...
-                    </span>
-                  ) : (
-                    <span className="flex items-center justify-center gap-2">
-                      <Send className="w-4 h-4" />
-                      Send Message
-                    </span>
-                  )}
-                </Button>
-              </form>
-            </TiltCard3D>
-          </motion.div>
+              <div>
+                <label htmlFor="subject" className="label-caps text-muted-foreground block mb-2">
+                  Subject
+                </label>
+                <input
+                  id="subject"
+                  name="subject"
+                  placeholder="Project Inquiry / Partnership"
+                  required
+                  minLength={3}
+                  className="field-input"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="message" className="label-caps text-muted-foreground block mb-2">
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  placeholder="Tell us about your project requirements..."
+                  rows={5}
+                  required
+                  minLength={10}
+                  className="field-input resize-y"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={status === 'submitting'}
+                className="btn-primary w-full h-12 text-sm"
+              >
+                {status === 'submitting' ? 'Sending Message...' : 'Send Message'}
+              </button>
+
+              <p role="status" aria-live="polite" className="text-sm">
+                {status === 'success' && (
+                  <span className="text-primary">
+                    Message sent. Thank you for reaching out, we will respond shortly.
+                  </span>
+                )}
+                {status === 'error' && (
+                  <span className="text-destructive">
+                    Failed to send the message. Please email info@futurelabs.et directly.
+                  </span>
+                )}
+              </p>
+            </form>
+          </div>
         </div>
       </div>
     </section>
