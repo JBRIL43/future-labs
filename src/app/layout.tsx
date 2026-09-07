@@ -35,19 +35,24 @@ export const metadata: Metadata = {
     title: "Future Labs | Building the Future of Ethiopia Through Technology",
     description:
       "Technology innovation company shaping Ethiopia's digital future through AI, Blockchain, Cloud Computing, and impactful digital products.",
+    url: "https://www.futurelabs.et",
     siteName: "Future Labs",
+    locale: "en_US",
     type: "website",
-    images: [{
-      url: "/hero-bg.png",
-      width: 1344,
-      height: 768,
-      alt: "Future Labs Technology",
-    }],
+    images: [
+      {
+        url: "/hero-bg.png",
+        width: 1869,
+        height: 832,
+        alt: "Future Labs - Building the Future of Ethiopia Through Technology",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Future Labs",
-    description: "Building the Future of Ethiopia Through Technology",
+    title: "Future Labs | Building the Future of Ethiopia Through Technology",
+    description:
+      "Technology innovation company shaping Ethiopia's digital future through AI, Blockchain, Cloud Computing, and impactful digital products.",
     images: ["/hero-bg.png"],
   },
 };
